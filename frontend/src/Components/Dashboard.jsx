@@ -6,6 +6,18 @@ export default function Dashboard() {
   const handleLogout = () => {
     navigate("/");
   };
+  
+  const handleNavigateHome = () => {
+    navigate("/home");
+  };
+
+  const handleNavigateAnalytics = () => {
+    navigate("/analytics");
+  };
+
+  const handleNavigateSettings = () => {
+    navigate("/settings");
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
@@ -13,9 +25,15 @@ export default function Dashboard() {
       <div className="w-64 bg-purple-700 text-white p-6">
         <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
         <ul>
-          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">🏠 Home</li>
-          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">📊 Analytics</li>
-          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">⚙️ Settings</li>
+          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
+            onClick = {handleNavigateHome}>
+            🏠 Home</li>
+          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
+            onClick = {handleNavigateAnalytics}>
+            📊 Analytics</li>
+          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
+            onClick = {handleNavigateSettings}>
+            ⚙️ Settings</li>
         </ul>
         <button
           onClick={handleLogout}
