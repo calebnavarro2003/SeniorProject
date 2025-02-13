@@ -15,10 +15,6 @@ export default function Home() {
     navigate("/"); // Navigates to the home page (or login page)
   };
 
-  const handleNavigateSettings = () => {
-    navigate("/settings"); // Navigates to the settings page
-  };
-
   const modules = Array.from({ length: 13 }, (_, index) => `Module ${index + 1}`);
 
   return (
@@ -32,12 +28,6 @@ export default function Home() {
             onClick={handleNavigateDashboard}
           >
             🏠 Back to Dashboard
-          </li>
-          <li
-            className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
-            onClick={handleNavigateSettings}
-          >
-            ⚙️ Settings
           </li>
         </ul>
         <button

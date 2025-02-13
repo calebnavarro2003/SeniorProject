@@ -13,8 +13,8 @@ function App() {
         <Route path="/" element={<Login />} />
         <Route path="/dashboard" element={<Dashboard />} />
         <Route path="/home" element={<Home/>}/>
-        <Route path="/home" element={<Settings/>}/>
-        <Route path="/home" element={<Analytics/>}/>
+        <Route path="/settings" element={<Settings/>}/>
+        <Route path="/analytics" element={<Analytics/>}/>
         <Route path="/module/:moduleName" element={<ModulePage/>}/>
       </Routes>
     </Router>
