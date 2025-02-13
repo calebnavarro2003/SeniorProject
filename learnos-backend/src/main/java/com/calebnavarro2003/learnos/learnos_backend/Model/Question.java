@@ -41,4 +41,12 @@ public class Question {
     public void setImage(byte[] image) {
         this.image = image;
     }
+
+    public void setModuleId(int moduleId) {
+        this.module_id = moduleId;
+    }
+
+    public void setQuestionId(int questionId) {
+        this.questionId = questionId;
+    }
 }
