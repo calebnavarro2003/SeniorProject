@@ -20,6 +20,18 @@ export default function Dashboard() {
   const handleLogout = () => {
     navigate("/");
   };
+  
+  const handleNavigateHome = () => {
+    navigate("/home");
+  };
+
+  const handleNavigateAnalytics = () => {
+    navigate("/analytics");
+  };
+
+  const handleNavigateSettings = () => {
+    navigate("/settings");
+  };
 
   return (
     <div className="flex h-screen bg-gray-100">
