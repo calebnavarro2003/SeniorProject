@@ -42,9 +42,15 @@ export default function Dashboard() {
         </div>
         
         <ul className="pl-[32px]">
-          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">🏠 Home</li>
-          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">📊 Analytics</li>
-          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">⚙️ Settings</li>
+        <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
+            onClick = {handleNavigateHome}>
+            🏠 Home</li>
+          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
+            onClick = {handleNavigateAnalytics}>
+            📊 Analytics</li>
+          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
+            onClick = {handleNavigateSettings}>
+            ⚙️ Settings</li>
         </ul>
         <button
           onClick={handleLogout}
