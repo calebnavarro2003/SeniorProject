@@ -42,7 +42,6 @@ public class QuestionController {
 
     @PostMapping("/upload")
     public ResponseEntity<String> uploadFile(
-            @RequestParam("question_id") Integer questionId,
             @RequestParam("module_id") Integer moduleId,
             @RequestPart("file") MultipartFile file,
             HttpServletRequest request) {
@@ -51,7 +50,7 @@ public class QuestionController {
             String authHeader = request.getHeader("Authorization");
             System.out.println("Authorization Header: " + authHeader);
 
-            questionService.saveQuestionImage(questionId, moduleId, file.getBytes());
+            questionService.saveQuestionImage(moduleId, file.getBytes());
             return ResponseEntity.ok("File uploaded successfully");
         } catch (Exception e) {
             return ResponseEntity.status(500).body("Failed to upload file: " + e.getMessage());
