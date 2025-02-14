@@ -19,7 +19,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests.anyRequest().authenticated())
                 .oauth2Login(oauth2 ->
-                        oauth2.defaultSuccessUrl("/dashboard", true));
+                        oauth2.defaultSuccessUrl("http://localhost:3000/dashboard", true));
 
         return http.build();
     }

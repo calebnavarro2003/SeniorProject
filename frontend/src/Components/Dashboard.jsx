@@ -1,7 +1,21 @@
 import { useNavigate } from "react-router-dom";
+import { useState, useEffect } from "react";
+import axios from "axios";
 
 export default function Dashboard() {
   const navigate = useNavigate();
+  const [user, setUser] = useState(null)
+
+  useEffect(() => {
+      axios.get('http://localhost:8080/get-user-info', {withCredentials: true})
+      .then(response => {
+        setUser(response.data)
+        console.log(user)
+      })
+      .catch(error => {
+        console.error("Error fetching user info: ", error)
+      })
+  }, []);
 
   const handleLogout = () => {
     navigate("/");
@@ -11,8 +25,11 @@ export default function Dashboard() {
     <div className="flex h-screen bg-gray-100">
       {/* Sidebar */}
       <div className="w-64 bg-purple-700 text-white p-6">
-        <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
-        <ul>
+        <div className="flex flex-row space-x-8">
+          <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
+        </div>
+        
+        <ul className="pl-[32px]">
           <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">🏠 Home</li>
           <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">📊 Analytics</li>
           <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer">⚙️ Settings</li>
@@ -27,7 +44,7 @@ export default function Dashboard() {
 
       {/* Main Content */}
       <div className="flex-1 flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Welcome to Your Dashboard 🎉</h1>
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">Welcome to Your Dashboard {user ? user.given_name : ""} 🎉</h1>
         <p className="text-lg text-gray-600">Manage your account and explore the features.</p>
       </div>
     </div>

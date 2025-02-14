@@ -22,8 +22,13 @@ export default function Login() {
     }
   };
 
+  const googleLogin = () => {
+    window.location.href = 'http://localhost:8080/oauth2/authorization/google'
+  };
+
   return (
-    <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
+    <div className="flex flex-col space-y-8 items-center justify-center min-h-screen bg-gradient-to-r from-blue-500 to-purple-600">
+      <button className="bg-white py-2 px-4 rounded" onClick={googleLogin}>Login with Google</button>
       <div className="bg-white bg-opacity-20 backdrop-blur-md p-8 rounded-xl shadow-lg w-96">
         <h2 className="text-3xl font-semibold text-center text-white mb-6">Welcome Back</h2>
         {error && <p className="text-red-400 text-sm text-center mb-3">{error}</p>}
