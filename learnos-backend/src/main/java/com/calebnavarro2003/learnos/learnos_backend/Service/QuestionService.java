@@ -16,5 +16,13 @@ public class QuestionService {
         return questionRepository.findImageByQuestionId(id);
     }
 
+    public void saveQuestionImage(Integer questionId, Integer moduleId, byte[] image) {
+        Question question = new Question();
+        question.setQuestionId(questionId);
+        question.setModuleId(moduleId);
+        question.setImage(image);
+        questionRepository.save(question);
+    }
+
  
 }

@@ -8,4 +8,6 @@ import com.calebnavarro2003.learnos.learnos_backend.Model.Question;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question, Integer> {
     Question findImageByQuestionId(int id);
+
+    Question save(Question question);
 }
