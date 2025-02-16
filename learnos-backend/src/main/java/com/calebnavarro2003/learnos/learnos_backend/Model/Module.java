@@ -1,6 +1,7 @@
 package com.calebnavarro2003.learnos.learnos_backend.Model;
 
 
+import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -12,6 +13,8 @@ public class Module {
     @Id
     private int module_Id;
     private String title;
+
+    @Column(columnDefinition = "TEXT")
     private String description;
 
     public int getModuleId() {
