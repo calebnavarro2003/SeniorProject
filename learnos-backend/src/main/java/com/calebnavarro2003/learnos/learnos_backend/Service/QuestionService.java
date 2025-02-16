@@ -1,5 +1,7 @@
 package com.calebnavarro2003.learnos.learnos_backend.Service;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -16,11 +18,16 @@ public class QuestionService {
         return questionRepository.findImageByQuestionId(id);
     }
 
-    public void saveQuestionImage( Integer moduleId, byte[] image) {
+    public void saveQuestionImage( Integer question_id, Integer moduleId, byte[] image) {
         Question question = new Question();
+        question.setQuestionId(question_id);
         question.setModuleId(moduleId);
         question.setImage(image);
         questionRepository.save(question);
+    }
+
+    public List<Question> getQuestionsByModuleId(Integer module_Id) {
+        return questionRepository.findByModuleId(module_Id);
     }
 
  
