@@ -11,8 +11,8 @@ import jakarta.persistence.Table;
 public class Question {
     @Id
     private int questionId;
-    private int module;
     private int module_id;
+    private String content;
 
     @Lob
     @Column(name = "Image", columnDefinition = "MEDIUMBLOB")
@@ -26,12 +26,12 @@ public class Question {
         this.questionId = question_id;
     }
 
-    public int getModule() {
-        return module;
+    public int getModule_Id() {
+        return module_id;
     }
 
-    public void setModule(int module) {
-        this.module = module;
+    public void setModuleId(int moduleId) {
+        this.module_id = moduleId;
     }
 
     public byte[] getImage() {
@@ -42,11 +42,15 @@ public class Question {
         this.image = image;
     }
 
-    public void setModuleId(int moduleId) {
-        this.module_id = moduleId;
-    }
-
     public void setQuestionId(int questionId) {
         this.questionId = questionId;
+    }
+
+    public String getContext() {
+        return content;
+    }
+
+    public void setContext(String content) {
+        this.content = content;
     }
 }

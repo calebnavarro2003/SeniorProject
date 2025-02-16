@@ -31,13 +31,10 @@ public class QuestionController {
     QuestionService questionService;
 
     @GetMapping("/{id}")
-    public ResponseEntity<byte[]> getFile(@PathVariable Integer id) {
+    public Question getFile(@PathVariable Integer id) {
     Question fileEntity = questionService.getQuestionImage(id);
 
-    return ResponseEntity.ok()
-        .header(HttpHeaders.CONTENT_DISPOSITION, "attachment; filename=\"file.pdf\"")
-        .contentType(MediaType.APPLICATION_PDF)
-        .body(fileEntity.getImage());
+    return fileEntity;
 }
 
     @PostMapping("/upload")
