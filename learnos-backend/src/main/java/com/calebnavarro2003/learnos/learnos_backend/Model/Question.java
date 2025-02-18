@@ -1,10 +1,13 @@
 package com.calebnavarro2003.learnos.learnos_backend.Model;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.util.Base64;
 
 @Entity
 @Table(name = "questions")
@@ -19,6 +22,9 @@ public class Question {
     @Lob
     @Column(name = "Image", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
+
+    @Transient
+    private String imageBase64;
 
     public int getQuestion_id() {
         return questionId;
@@ -54,5 +60,19 @@ public class Question {
 
     public void setContent(String content) {
         this.content = content;
+    }
+
+    public String getImageBase64() {
+        return imageBase64;
+    }
+
+    public void setImageBase64(String imageBase64) {
+        this.imageBase64 = imageBase64;
+    }
+
+    public void convertImageDataToBase64() {
+        if (this.image != null) {
+            this.imageBase64 = Base64.getEncoder().encodeToString(this.image);
+        }
     }
 }
