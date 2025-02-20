@@ -61,9 +61,6 @@ public class QuestionController {
     @GetMapping("/module/{moduleId}")
     public ResponseEntity<List<Question>> getQuestionsByModuleId(@PathVariable Integer moduleId) {
         List<Question> questions = questionService.getQuestionsByModuleId(moduleId);
-        for (Question question : questions) {
-            question.convertImageDataToBase64();
-        }
         return ResponseEntity.ok(questions);
     }
 

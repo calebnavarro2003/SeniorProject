@@ -23,9 +23,6 @@ public class Question {
     @Column(name = "Image", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
 
-    @Transient
-    private String imageBase64;
-
     public int getQuestion_id() {
         return questionId;
     }
@@ -62,17 +59,6 @@ public class Question {
         this.content = content;
     }
 
-    public String getImageBase64() {
-        return imageBase64;
-    }
 
-    public void setImageBase64(String imageBase64) {
-        this.imageBase64 = imageBase64;
-    }
 
-    public void convertImageDataToBase64() {
-        if (this.image != null) {
-            this.imageBase64 = Base64.getEncoder().encodeToString(this.image);
-        }
-    }
 }
