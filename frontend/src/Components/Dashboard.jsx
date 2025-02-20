@@ -22,7 +22,7 @@ export default function Dashboard() {
   };
   
   const handleNavigateHome = () => {
-    navigate("/home");
+    navigate("/modules");
   };
 
   const handleNavigateAnalytics = () => {

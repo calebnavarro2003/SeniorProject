@@ -1,10 +1,13 @@
 package com.calebnavarro2003.learnos.learnos_backend.Model;
 
+
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
+import jakarta.persistence.Transient;
+import java.util.Base64;
 
 @Entity
 @Table(name = "questions")
@@ -55,4 +58,7 @@ public class Question {
     public void setContent(String content) {
         this.content = content;
     }
+
+
+
 }
