@@ -50,7 +50,7 @@ const ModuleDetail = () => {
   const base64Image = `data:image/jpeg;base64,${currentQuestion.image}`;
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4">
+    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4 w-full">
       <h1 className="text-4xl font-bold text-gray-800 mb-6">
         Module: {moduleId}
       </h1>

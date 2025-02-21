@@ -34,10 +34,10 @@ const ModulesPage = () => {
 
   return (
     <div className="flex-1 flex flex-col items-center justify-start overflow-auto bg-gray-100">
-      <h1 className="w-full text-center text-4xl font-bold text-gray-800 p-6 border-b border-gray">
+      <h1 className="w-full text-center text-4xl font-bold text-gray-800 pt-6 pb-2">
         Available Modules
       </h1>
-      <div className="flex flex-col gap-4 w-full px-6 pb-6 overflow-auto">
+      <div className="flex flex-col gap-4 w-full px-6 py-4 overflow-auto">
         {modules.map((module) => (
           <div
           key={module.moduleId}
