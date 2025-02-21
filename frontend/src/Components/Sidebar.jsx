@@ -34,7 +34,7 @@ function Sidebar() {
                     {  
                         user ? 
                         <img className="rounded-full" src={user.picture} alt='user profile'/> :
-                        <span class="font-medium text-gray-600 dark:text-gray-300"></span>
+                        <svg class="w-10 h-10 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
                     }
                 </div>
             </div>
