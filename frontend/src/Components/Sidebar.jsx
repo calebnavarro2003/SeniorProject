@@ -16,6 +16,10 @@ function Sidebar() {
         })
     }, []);
       
+    const handleNavigateHome = () => {
+        navigate("/dashboard");
+    };
+
     const handleNavigateModules = () => {
         navigate("/modules");
     };
@@ -27,7 +31,7 @@ function Sidebar() {
     const navigate = useNavigate();
 
     return (
-        <div className="w-80 bg-purple-700 text-white p-8">
+        <div className="bg-purple-700 text-white p-8">
             <div className="flex flex-row pt-4 px-2 gap-8">
                 <h2 className="text-3xl font-bold my-auto mr-auto text-wrap">Welcome, <br></br> {user ? user.given_name : "User"}</h2>
                 <div class="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 my-auto">
@@ -41,8 +45,12 @@ function Sidebar() {
             
             <ul className='mt-10 text-2xl font-bold'>
                 <li className='rounded cursor-pointer hover:bg-purple-600 py-3 px-2'
-                    onClick = {handleNavigateModules}>
+                    onClick = {handleNavigateHome}>
                     🏠&nbsp;&nbsp;&nbsp;&nbsp;Home
+                </li>
+                <li className='rounded cursor-pointer hover:bg-purple-600 py-3 px-2'
+                    onClick = {handleNavigateModules}>
+                    📁&nbsp;&nbsp;&nbsp;&nbsp;Modules
                 </li>
                 <li className='rounded cursor-pointer hover:bg-purple-600 py-3 px-2'
                     onClick = {handleNavigateSettings}>
