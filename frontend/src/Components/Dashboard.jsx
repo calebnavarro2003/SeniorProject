@@ -1,69 +1,24 @@
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import Sidebar from "./Sidebar";
 
 export default function Dashboard() {
-  const navigate = useNavigate();
-  const [user, setUser] = useState(null)
-
-  useEffect(() => {
-      axios.get('http://localhost:8080/get-user-info', {withCredentials: true})
-      .then(response => {
-        setUser(response.data)
-        console.log(user)
-      })
-      .catch(error => {
-        console.error("Error fetching user info: ", error)
-      })
-  }, []);
-
-  const handleLogout = () => {
-    navigate("/");
-  };
-  
-  const handleNavigateHome = () => {
-    navigate("/modules");
-  };
-
-  const handleNavigateAnalytics = () => {
-    navigate("/analytics");
-  };
-
-  const handleNavigateSettings = () => {
-    navigate("/settings");
-  };
 
   return (
-    <div className="flex h-screen bg-gray-100">
-      {/* Sidebar */}
-      <div className="w-64 bg-purple-700 text-white p-6">
-        <div className="flex flex-row space-x-8">
-          <h2 className="text-2xl font-bold mb-6">Dashboard</h2>
-        </div>
-        
-        <ul className="pl-[32px]">
-        <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
-            onClick = {handleNavigateHome}>
-            🏠 Home</li>
-          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
-            onClick = {handleNavigateAnalytics}>
-            📊 Analytics</li>
-          <li className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
-            onClick = {handleNavigateSettings}>
-            ⚙️ Settings</li>
-        </ul>
-        <button
-          onClick={handleLogout}
-          className="w-full mt-6 bg-red-500 p-2 rounded-lg hover:bg-red-700"
-        >
-          Logout
-        </button>
-      </div>
+    <div className="flex flex-row h-screen">
+      <Sidebar />
 
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Welcome to Your Dashboard {user ? user.given_name : ""} 🎉</h1>
-        <p className="text-lg text-gray-600">Manage your account and explore the features.</p>
+      <div className="flex flex-col p-4 gap-4  w-full" style={{backgroundColor: "#EEE8F2"}}>
+        <div className="flex flex-row h-2/5 w-full bg-white rounded shadow gap-4">
+          <div className="w-3/5 rounded text-3xl m-auto px-12">Boost your learning - just one short lesson at a time 🚀</div>
+          <div className="flex justify-center items-center w-2/5 rounded">
+              <img className="max-h-full py-12 w-auto object-contain" src="./gold-medal.png" alt="gold medal reward"/>
+          </div>
+        </div>
+        <div className="flex flex-col h-3/5 bg-white rounded shadow">
+          <div className="text-3xl my-8 ml-8">Your current progress</div>
+          <div className="w-full h-full">
+            {/* Add progress map here */}
+          </div>
+        </div>
       </div>
     </div>
   );
