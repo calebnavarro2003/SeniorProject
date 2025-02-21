@@ -6,18 +6,22 @@ import Analytics from "./Components/Analytics"
 import Settings from "./Components/Pages/Settings"
 import ModulePage from "./Components/Pages/ModulePage"
 import ModuleDetail from "./Components/Pages/ModuleDetail"
+import Sidebar from "./Components/Sidebar";
 
 function App() {
   return (
-    <Router>
-      <Routes>
-        <Route path="/" element={<Login />} />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/settings" element={<Settings/>}/>
-        <Route path="/modules" element={<ModulePage/>}/>
-        <Route path="/module/:moduleId" element={<ModuleDetail/>} /> 
-      </Routes>
-    </Router>
+      <Router>
+        <div className="flex flex-row h-screen w-screen">
+          <Sidebar />
+          <Routes>
+            <Route path="/" element={<Login />} />
+            <Route path="/dashboard" element={<Dashboard />} />
+            <Route path="/settings" element={<Settings/>}/>
+            <Route path="/modules" element={<ModulePage/>}/>
+            <Route path="/module/:moduleId" element={<ModuleDetail/>} /> 
+          </Routes>
+        </div>
+      </Router>
   );
 }
 
