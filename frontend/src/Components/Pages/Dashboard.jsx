@@ -1,22 +1,30 @@
-import Sidebar from "../Sidebar";
+import React from 'react';
 
 export default function Dashboard() {
-
   return (
-    <div className="flex flex-col px-6 py-4 gap-4  w-full bg-gray-100">
-      <div className="flex flex-row h-2/5 w-full bg-white rounded shadow gap-4">
-        <div className="w-3/5 rounded text-3xl m-auto px-12">Boost your learning - just one short lesson at a time 🚀</div>
-        <div className="flex justify-center items-center w-2/5 rounded">
-            <img className="max-h-full py-12 w-auto object-contain" src="./gold-medal.png" alt="gold medal reward"/>
+    <div className="flex flex-col px-6 py-4 gap-4 w-full bg-gray-100">
+      {/* Top Section */}
+      <div className="flex flex-col md:flex-row h-auto md:h-64 w-full bg-white rounded shadow gap-4 overflow-hidden">
+        <div className="md:w-3/5 w-full flex items-center justify-center text-3xl px-6 py-4 md:py-0">
+          Boost your learning - just one short lesson at a time 🚀
+        </div>
+        <div className="w-full md:w-1/5"></div> {/* Blank space */}
+        <div className="md:w-1/5 w-full flex justify-center items-center rounded">
+          <img
+            className="object-contain max-w-full max-h-full"
+            src="./gold-medal.png"
+            alt="gold medal reward"
+          />
         </div>
       </div>
-      <div className="flex flex-col h-3/5 bg-white rounded shadow-md">
+
+      {/* Bottom Section */}
+      <div className="flex flex-col h-auto md:h-auto bg-white rounded shadow-md">
         <div className="text-3xl my-8 ml-8">Your current progress</div>
-        <div className="w-full h-full">
+        <div className="w-full h-full px-4 pb-4">
           {/* Add progress map here */}
         </div>
       </div>
     </div>
-
   );
 }
