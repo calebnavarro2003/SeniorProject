@@ -11,8 +11,12 @@ function App() {
 
   return (
       <div className="flex md:flex-row flex-col h-screen">
-        {location.pathname !== "/" && <Sidebar />}
-        <div className="flex-1 flex flex-col ">
+        {location.pathname !== "/" && (
+          <div className='sticky top-0 z-50'>
+            <Sidebar />
+          </div> 
+          )}
+        <div className="flex-1 flex flex-col">
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />

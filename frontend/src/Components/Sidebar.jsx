@@ -66,7 +66,7 @@ function Sidebar() {
             </div>
 
             {/* Mobile Navbar */}
-            <div className="md:hidden bg-purple-700 text-white px-4 py-4 flex justify-between items-center w-full">
+            <div className="md:hidden sticky bg-purple-700 text-white px-4 py-4 flex justify-between items-center w-full overflow-auto">
                 <div className="flex items-center gap-4">
                     <div className="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
                         {user ? (
