@@ -8,6 +8,7 @@ const ModuleDetail = () => {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showImage, setShowImage] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState({});
+  const [hasStarted, setHasStarted] = useState(false); // To track if the module has started
 
   useEffect(() => {
     axios
@@ -19,6 +20,10 @@ const ModuleDetail = () => {
   }, [moduleId]);
 
   if (!module) return <div>Loading...</div>;
+
+  const handleStartModule = () => {
+    setHasStarted(true); // Begin the module
+  };
 
   const handleNext = () => setShowImage(true);
   const handleNextQuestion = () => {
@@ -46,68 +51,96 @@ const ModuleDetail = () => {
 
   const currentQuestion = module[currentIndex];
 
-  // Convert byte data to base64 string
-  const base64Image = `data:image/jpeg;base64,${currentQuestion.image}`;
+  // Convert byte data to base64 string for the image
+  const base64Image = currentQuestion?.image
+    ? `data:image/jpeg;base64,${currentQuestion.image}`
+    : "";
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-screen bg-gray-100 p-4 w-full">
-      <h1 className="text-4xl font-bold text-gray-800 mb-6">
-        Module: {moduleId}
-      </h1>
-
-      {!showImage ? (
-        <div className="p-6 bg-white shadow-md rounded-lg text-center w-full max-w-2xl">
-          <p className="text-lg text-gray-700">{currentQuestion.content}</p>
-          <div className="flex justify-between mt-4">
-            <button
-              className="bg-blue-500 text-white px-6 py-2 rounded"
-              onClick={handlePreviousQuestion}
-              disabled={currentIndex === 0 && !showImage}
+    <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full">
+      {!hasStarted ? (
+        <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+          <h1 className="text-4xl font-bold text-gray-800 mb-6">
+            Module {moduleId}: {module.title} Module Title
+          </h1>
+          <h2 className="text-2xl text-gray-800 mb-6">Textbook sections: Textbook sections</h2>
+          <p className="text-lg text-gray-700 overflow-auto max-h-[100px]">
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+          </p>
+          <div className="flex flex-row flex-wrap items-center justify-center gap-4 mt-auto mt-4 pt-4">
+            <div
+              className="flex flex-row items-center gap-2 mr-auto"
             >
-              Back
-            </button>
+              <div className="rounded-full bg-green-300 w-3 h-3" ></div>
+              {module.length} Questions
+            </div>
             <button
-              className="bg-blue-500 text-white px-6 py-2 rounded"
-              onClick={handleNext}
+              className=" bg-blue-500 text-white px-6 py-2 rounded"
+              onClick={handleStartModule}
             >
-              Next
+              Begin Module
             </button>
           </div>
+          
         </div>
       ) : (
-        <div className="p-6 bg-white shadow-md rounded-lg text-center w-full max-w-2xl">
-          <img src={base64Image} alt="Question" className="mb-4" />
-          <div className="grid grid-cols-2 gap-4 mt-4">
-            {["A", "B", "C", "D"].map((choice) => (
-              <button
-                key={choice}
-                className={`px-4 py-2 rounded ${
-                  selectedAnswers[currentQuestion.questionId] === choice
-                    ? "bg-green-700"
-                    : "bg-green-500"
-                } text-white`}
-                onClick={() => handleAnswerSelect(currentQuestion.questionId, choice)}
-              >
-                {choice}
-              </button>
-            ))}
-          </div>
-          <div className="flex justify-between mt-6">
-            <button
-              className="bg-blue-500 text-white px-6 py-2 rounded"
-              onClick={handlePreviousQuestion}
-              disabled={currentIndex === 0 && !showImage}
-            >
-              Back
-            </button>
-            <button
-              className="bg-blue-500 text-white px-6 py-2 rounded"
-              onClick={handleNextQuestion}
-            >
-              Next Question
-            </button>
-          </div>
-        </div>
+        <>
+          {!showImage ? (
+            <div className="p-6 bg-white shadow-md rounded-lg text-center w-full max-w-2xl">
+              <p className="text-lg text-gray-700">{currentQuestion.content}</p>
+              <div className="flex justify-between mt-4">
+                <button
+                  className="bg-blue-500 text-white px-6 py-2 rounded"
+                  onClick={handlePreviousQuestion}
+                  disabled={currentIndex === 0 && !showImage}
+                >
+                  Back
+                </button>
+                <button
+                  className="bg-blue-500 text-white px-6 py-2 rounded"
+                  onClick={handleNext}
+                >
+                  Next
+                </button>
+              </div>
+            </div>
+          ) : (
+            <div className="p-6 bg-white shadow-md rounded-lg text-center w-full max-w-2xl">
+              <img src={base64Image} alt="Question" className="mb-4" />
+              <div className="grid grid-cols-2 gap-4 mt-4">
+                {["A", "B", "C", "D"].map((choice) => (
+                  <button
+                    key={choice}
+                    className={`px-4 py-2 rounded ${
+                      selectedAnswers[currentQuestion.questionId] === choice
+                        ? "bg-green-700"
+                        : "bg-green-500"
+                    } text-white`}
+                    onClick={() => handleAnswerSelect(currentQuestion.questionId, choice)}
+                  >
+                    {choice}
+                  </button>
+                ))}
+              </div>
+              <div className="flex justify-between mt-6">
+                <button
+                  className="bg-blue-500 text-white px-6 py-2 rounded"
+                  onClick={handlePreviousQuestion}
+                  disabled={currentIndex === 0 && !showImage}
+                >
+                  Back
+                </button>
+                <button
+                  className="bg-blue-500 text-white px-6 py-2 rounded"
+                  onClick={handleNextQuestion}
+                >
+                  Next Question
+                </button>
+              </div>
+            </div>
+          )}
+        </>
       )}
     </div>
   );
