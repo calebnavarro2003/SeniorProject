@@ -1,28 +1,36 @@
-import { BrowserRouter as Router, Routes, Route } from "react-router-dom";
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom';
 import Login from "./Components/Pages/Login";
 import Dashboard from "./Components/Pages/Dashboard";
-import Home from "./Components/Pages/Home"
-import Analytics from "./Components/Analytics"
 import Settings from "./Components/Pages/Settings"
 import ModulePage from "./Components/Pages/ModulePage"
 import ModuleDetail from "./Components/Pages/ModuleDetail"
 import Sidebar from "./Components/Sidebar";
 
 function App() {
+  const location = useLocation();
+
   return (
-      <Router>
-        <div className="flex flex-row h-screen w-screen">
-          <Sidebar />
+      <div className="flex md:flex-row flex-col min-h-screen">
+        {location.pathname !== "/" && <Sidebar />}
+        <div className="flex-1 flex flex-col">
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
             <Route path="/settings" element={<Settings/>}/>
             <Route path="/modules" element={<ModulePage/>}/>
-            <Route path="/module/:moduleId" element={<ModuleDetail/>} /> 
+            <Route path="/module/:moduleId" element={<ModuleDetail/>} />
           </Routes>
         </div>
-      </Router>
+      </div>
   );
 }
 
-export default App;
+function AppWrapper() {
+  return (
+    <Router>
+      <App />
+    </Router>
+  );
+}
+
+export default AppWrapper;

@@ -1,64 +1,121 @@
-import React from 'react'
-import { useNavigate } from "react-router-dom";
-import { useState, useEffect } from "react";
-import axios from "axios";
+import React, { useState, useEffect } from 'react';
+import { useNavigate, useLocation } from 'react-router-dom';
+import axios from 'axios';
 
 function Sidebar() {
-    const [user, setUser] = useState(null)
+    const [user, setUser] = useState(null);
+    const [isMenuOpen, setIsMenuOpen] = useState(false);
+    const navigate = useNavigate();
+    const location = useLocation();
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-user-info', {withCredentials: true})
+        axios.get('http://localhost:8080/get-user-info', { withCredentials: true })
             .then(response => {
-            setUser(response.data)
-        })
-        .catch(error => {
-            console.error("Error fetching user info: ", error)
-        })
+                setUser(response.data);
+            })
+            .catch(error => {
+                console.error("Error fetching user info: ", error);
+            });
     }, []);
-      
-    const handleNavigateHome = () => {
-        navigate("/dashboard");
+
+    const handleNavigate = (path) => {
+        navigate(path);
+        setIsMenuOpen(false); // Close the menu after navigation
     };
 
-    const handleNavigateModules = () => {
-        navigate("/modules");
+    const toggleMenu = () => {
+        setIsMenuOpen(!isMenuOpen);
     };
-    
-    const handleNavigateSettings = () => {
-        navigate("/settings");
-    };
-    
-    const navigate = useNavigate();
 
     return (
-        <div className="bg-purple-700 text-white p-8">
-            <div className="flex flex-row pt-4 px-2 gap-8">
-                <h2 className="text-3xl font-bold my-auto mr-auto text-wrap">Welcome, <br></br> {user ? user.given_name : "User"}</h2>
-                <div class="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600 my-auto">
-                    {  
-                        user ? 
-                        <img className="rounded-full" src={user.picture} alt='user profile'/> :
-                        <svg class="w-10 h-10 text-gray-400 -left-1" fill="currentColor" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg"><path fill-rule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clip-rule="evenodd"></path></svg>
-                    }
+        <div>
+            {/* Desktop Sidebar */}
+            <div className="hidden md:flex md:flex-col bg-purple-700 text-white p-8 min-h-screen w-64">
+                <div className="flex flex-col pt-4 gap-8">
+                    <h2 className="text-3xl font-bold text-wrap">
+                        Welcome, <br /> {user ? user.given_name : "User"}
+                    </h2>
+                    <div className="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                        {user ? (
+                            <img className="w-full h-full object-cover" src={user.picture} alt="user profile" />
+                        ) : (
+                            <svg className="w-10 h-10 text-gray-400" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                            </svg>
+                        )}
+                    </div>
                 </div>
+
+                <ul className="mt-10 text-2xl font-bold">
+                    {location.pathname !== '/dashboard' && (
+                        <li className="rounded cursor-pointer hover:bg-purple-600 py-3 px-2" onClick={() => handleNavigate('/dashboard')}>
+                            🏠&nbsp;&nbsp;&nbsp;&nbsp;Home
+                        </li>
+                    )}
+                    {location.pathname !== '/modules' && (
+                        <li className="rounded cursor-pointer hover:bg-purple-600 py-3 px-2" onClick={() => handleNavigate('/modules')}>
+                            📁&nbsp;&nbsp;&nbsp;&nbsp;Modules
+                        </li>
+                    )}
+                    {location.pathname !== '/settings' && (
+                        <li className="rounded cursor-pointer hover:bg-purple-600 py-3 px-2" onClick={() => handleNavigate('/settings')}>
+                            ⚙️&nbsp;&nbsp;&nbsp;&nbsp;Settings
+                        </li>
+                    )}
+                </ul>
             </div>
-            
-            <ul className='mt-10 text-2xl font-bold'>
-                <li className='rounded cursor-pointer hover:bg-purple-600 py-3 px-2'
-                    onClick = {handleNavigateHome}>
-                    🏠&nbsp;&nbsp;&nbsp;&nbsp;Home
-                </li>
-                <li className='rounded cursor-pointer hover:bg-purple-600 py-3 px-2'
-                    onClick = {handleNavigateModules}>
-                    📁&nbsp;&nbsp;&nbsp;&nbsp;Modules
-                </li>
-                <li className='rounded cursor-pointer hover:bg-purple-600 py-3 px-2'
-                    onClick = {handleNavigateSettings}>
-                    ⚙️&nbsp;&nbsp;&nbsp;&nbsp;Settings
-                </li>
-            </ul>
+
+            {/* Mobile Navbar */}
+            <div className="md:hidden bg-purple-700 text-white px-4 py-2 flex justify-between items-center w-full">
+                <div className="flex items-center gap-4">
+                    <div className="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
+                        {user ? (
+                            <img className="w-full h-full object-cover" src={user.picture} alt="user profile" />
+                        ) : (
+                            <svg className="w-10 h-10 text-gray-400" viewBox="0 0 20 20" xmlns="http://www.w3.org/2000/svg">
+                                <path fillRule="evenodd" d="M10 9a3 3 0 100-6 3 3 0 000 6zm-7 9a7 7 0 1114 0H3z" clipRule="evenodd"></path>
+                            </svg>
+                        )}
+                    </div>
+                    <h2 className="text-xl font-bold">Welcome, {user ? user.given_name : "User"}</h2>
+                </div>
+                <button onClick={toggleMenu} className="focus:outline-none">
+                    {isMenuOpen ? (
+                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18" />
+                            <line x1="6" y1="6" x2="18" y2="18" />
+                        </svg>
+                    ) : (
+                        <svg className="w-6 h-6" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+                            <line x1="3" y1="12" x2="21" y2="12" />
+                            <line x1="3" y1="6" x2="21" y2="6" />
+                            <line x1="3" y1="18" x2="21" y2="18" />
+                        </svg>
+                    )}
+                </button>
+            </div>
+
+            {isMenuOpen && (
+                <div className="mt-2 md:hidden bg-white shadow-lg py-2 w-full">
+                    {location.pathname !== '/dashboard' && (
+                        <div className="block px-4 py-2 cursor-pointer text-black hover:bg-purple-600 hover:text-white" onClick={() => handleNavigate('/dashboard')}>
+                            🏠 Home
+                        </div>
+                    )}
+                    {location.pathname !== '/modules' && (
+                        <div className="block px-4 py-2 cursor-pointer text-black hover:bg-purple-600 hover:text-white" onClick={() => handleNavigate('/modules')}>
+                            📁 Modules
+                        </div>
+                    )}
+                    {location.pathname !== '/settings' && (
+                        <div className="block px-4 py-2 cursor-pointer text-black hover:bg-purple-600 hover:text-white" onClick={() => handleNavigate('/settings')}>
+                            ⚙️ Settings
+                        </div>
+                    )}
+                </div>
+            )}
         </div>
-  )
+    );
 }
 
-export default Sidebar
+export default Sidebar;

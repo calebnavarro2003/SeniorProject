@@ -1,42 +1,23 @@
-import { useNavigate } from "react-router-dom";
+import { useNavigate } from 'react-router-dom';
 
 export default function Settings() {
   const navigate = useNavigate();
 
-  const handleNavigateDashboard = () => {
-    navigate("/dashboard"); // Navigates to the dashboard
-  };
-
   const handleLogout = () => {
-    navigate("/"); // Navigates to the home page (or login page)
+    navigate('/'); // Navigates to the home page (or login page)
   };
 
   return (
-    <div className="flex h-screen bg-gray-100 overflow-hidden">
-      {/* Sidebar */}
-      <div className="w-64 bg-purple-700 text-white p-6 flex-shrink-0">
-        <h2 className="text-2xl font-bold mb-6">Settings</h2>
-        <ul>
-          <li
-            className="mb-4 hover:bg-purple-600 p-2 rounded cursor-pointer"
-            onClick={handleNavigateDashboard}
-          >
-            🏠 Back to Dashboard
-          </li>
-        </ul>
+    <div className="flex flex-col px-6 py-4 gap-4  w-full bg-gray-100">
+      <div className="flex flex-col w-full bg-white rounded shadow-md p-6 items-center">
+        <h1 className="text-4xl font-bold text-gray-800 mb-4">Settings</h1>
+        <p className="text-lg text-gray-600 mb-6">Manage your account settings here.</p>
         <button
           onClick={handleLogout}
-          className="w-full mt-6 bg-red-500 p-2 rounded-lg hover:bg-red-700"
+          className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded"
         >
           Logout
         </button>
-      </div>
-
-      {/* Main Content */}
-      <div className="flex-1 flex flex-col items-center justify-center">
-        <h1 className="text-4xl font-bold text-gray-800 mb-4">Settings</h1>
-        <p className="text-lg text-gray-600">Manage your account settings here.</p>
-        {/* Add settings form or content here */}
       </div>
     </div>
   );
