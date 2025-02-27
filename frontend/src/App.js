@@ -10,9 +10,9 @@ function App() {
   const location = useLocation();
 
   return (
-      <div className="flex md:flex-row flex-col min-h-screen">
+      <div className="flex md:flex-row flex-col h-screen">
         {location.pathname !== "/" && <Sidebar />}
-        <div className="flex-1 flex flex-col">
+        <div className="flex-1 flex flex-col ">
           <Routes>
             <Route path="/" element={<Login />} />
             <Route path="/dashboard" element={<Dashboard />} />
