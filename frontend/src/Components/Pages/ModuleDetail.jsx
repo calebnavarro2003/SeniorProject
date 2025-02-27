@@ -86,10 +86,11 @@ const ModuleDetail = () => {
         </div>
       ) : (
         <>
-          {!showImage ? (
-            <div className="p-6 bg-white shadow-md rounded-lg text-center w-full max-w-2xl">
+          {!showImage ? 
+          ( // Content page 
+            <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
               <p className="text-lg text-gray-700">{currentQuestion.content}</p>
-              <div className="flex justify-between mt-4">
+              <div className="flex justify-between mt-auto pt-4">
                 <button
                   className="bg-blue-500 text-white px-6 py-2 rounded"
                   onClick={handlePreviousQuestion}
@@ -106,7 +107,8 @@ const ModuleDetail = () => {
               </div>
             </div>
           ) : (
-            <div className="p-6 bg-white shadow-md rounded-lg text-center w-full max-w-2xl">
+            // Question page
+            <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
               <img src={base64Image} alt="Question" className="mb-4" />
               <div className="grid grid-cols-2 gap-4 mt-4">
                 {["A", "B", "C", "D"].map((choice) => (
@@ -123,7 +125,7 @@ const ModuleDetail = () => {
                   </button>
                 ))}
               </div>
-              <div className="flex justify-between mt-6">
+              <div className="flex justify-between mt-auto pt-4">
                 <button
                   className="bg-blue-500 text-white px-6 py-2 rounded"
                   onClick={handlePreviousQuestion}
