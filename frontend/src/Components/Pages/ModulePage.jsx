@@ -1,7 +1,6 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
 import axios from "axios";
-import Sidebar from "../Sidebar";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState([]);
@@ -25,11 +24,11 @@ const ModulesPage = () => {
   };
 
   return (
-    <div className="flex-1 flex flex-col items-center justify-start overflow-auto bg-gray-100">
-      <h1 className="w-full text-center text-4xl font-bold text-gray-800 pt-6 pb-2">
+    <div className=" flex flex-col items-center justify-start overflow-auto bg-gray-100">
+      <h1 className="w-full text-center text-4xl font-bold text-gray-800 py-4">
         Available Modules
       </h1>
-      <div className="flex flex-col gap-4 w-full px-6 py-4 overflow-auto">
+      <div className="flex flex-col gap-4 w-full px-6 pb-4 overflow-auto">
         {modules.map((module) => (
           <div
           key={module.moduleId}
