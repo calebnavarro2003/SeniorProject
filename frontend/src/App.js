@@ -10,8 +10,12 @@ function App() {
   const location = useLocation();
 
   return (
-      <div className="flex md:flex-row flex-col min-h-screen">
-        {location.pathname !== "/" && <Sidebar />}
+      <div className="flex md:flex-row flex-col h-screen">
+        {location.pathname !== "/" && (
+          <div className='sticky top-0 z-50'>
+            <Sidebar />
+          </div> 
+          )}
         <div className="flex-1 flex flex-col">
           <Routes>
             <Route path="/" element={<Login />} />
