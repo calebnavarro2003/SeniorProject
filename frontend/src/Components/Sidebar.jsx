@@ -30,7 +30,7 @@ function Sidebar() {
     return (
         <div>
             {/* Desktop Sidebar */}
-            <div className="hidden md:flex md:flex-col bg-purple-700 text-white p-8 min-h-screen">
+            <div className="hidden md:flex md:flex-col bg-purple-600 text-white p-8 min-h-screen">
                 <div className="flex flex-row pt-4 gap-8">
                     <h2 className="text-3xl font-bold text-wrap">
                         Welcome, <br /> {user ? user.given_name : "User"}
@@ -66,7 +66,7 @@ function Sidebar() {
             </div>
 
             {/* Mobile Navbar */}
-            <div className="md:hidden sticky bg-purple-700 text-white px-4 py-4 flex justify-between items-center w-full overflow-auto">
+            <div className="md:hidden sticky bg-purple-600 text-white px-4 py-4 flex justify-between items-center w-full overflow-auto">
                 <div className="flex items-center gap-4">
                     <div className="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
                         {user ? (

@@ -1,6 +1,29 @@
+import React, { useEffect, useState } from 'react';
+
 export default function Dashboard() {
+  const [showBanner, setShowBanner] = useState(false);
+
+  useEffect(() => {
+    // Logic to display the banner on first load
+    setShowBanner(true);
+  }, []);
+
+  const handleBannerClose = () => {
+    setShowBanner(false);
+  };
+
   return (
     <div className="flex flex-col px-4 py-4 gap-4 w-full h-full flex-1 bg-gray-100">
+      {/* Banner that appears each time a user navigates to the dashboard */}
+      {showBanner && (
+        <div className="mb-4 w-full bg-purple-600 text-white p-4 rounded-lg shadow-md flex justify-between items-center">
+          <span>This is a placeholder for future notifications we may add about important dates or module information!</span>
+          <button onClick={handleBannerClose} className="text-white font-bold">
+            X
+          </button>
+        </div>
+      )}
+
       {/* Top Section */}
       <div className="flex flex-col md:flex-row md:h-64 w-full bg-white rounded-lg shadow gap-4 overflow-hidden">
         <div className="md:w-3/5 w-full flex items-center text-3xl px-6 py-4">

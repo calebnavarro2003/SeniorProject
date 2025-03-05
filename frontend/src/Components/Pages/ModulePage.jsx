@@ -19,8 +19,8 @@ const ModulesPage = () => {
 
   const navigate = useNavigate();
 
-  const handleNavigateToModule = (moduleId) => {
-    navigate(`/module/${moduleId}`); // Navigate to the respective module page
+  const handleNavigateToModule = (moduleId, moduleTitle, moduleDescription) => {
+    navigate(`/module/${moduleId}`, { state: { title: moduleTitle, description: moduleDescription } }); // Pass module details as state
   };
 
   return (
@@ -37,7 +37,6 @@ const ModulesPage = () => {
         >
           <h2 className="text-xl font-semibold text-gray-800">Module {module.moduleId}: {module.title}</h2>
           <p className="text-gray-600">{module.description}</p>
-          <p className="text-gray-500">{module.title}</p>
         </div>
         ))}
       </div>
