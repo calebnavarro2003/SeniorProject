@@ -24,28 +24,46 @@ const ModuleDetail = () => {
 
   const handleStartModule = () => {
     setHasStarted(true);
+    setCurrentIndex(0);
+    setShowImage(false); // Starts with content of the first module
   };
 
-  const handleNext = () => setShowImage(true);
+  const handleNext = () => {
+    if (showImage) {
+      // From Qx, go to Cx+1
+      setShowImage(false);
+      if (currentIndex < module.length - 1) setCurrentIndex(currentIndex + 1);
+    } else {
+      // From Cx, go to Qx
+      setShowImage(true);
+    }
+  };
+
   const handleNextQuestion = () => {
+    // Ensure we're going to the next content page
     setShowImage(false);
     if (currentIndex < module.length - 1) setCurrentIndex(currentIndex + 1);
   };
 
   const handlePreviousQuestion = () => {
-    if (showImage) {
-      setShowImage(false);
+    if (reviewAnswers) {
+      setReviewAnswers(false);
+      setCurrentIndex(module.length - 1);
+      setShowImage(true);
     } else {
-      if (currentIndex > 0) {
-        setCurrentIndex(currentIndex - 1);
-        setShowImage(true);
+      if (showImage) {
+        // From Qx, go to Cx
+        setShowImage(false);
+      } else {
+        // From Cx, go to Cx-1 or back to the module overview if the first content page
+        if (currentIndex === 0) {
+          setHasStarted(false);
+        } else {
+          setShowImage(true); // Go to Qx-1
+          setCurrentIndex(currentIndex - 1);
+        }
       }
     }
-  };
-
-  const handleBackToOverview = () => {
-    setReviewAnswers(false);
-    setHasStarted(false);
   };
 
   const handleAnswerSelect = (questionId, choice) => {
@@ -55,9 +73,14 @@ const ModuleDetail = () => {
     }));
   };
 
+  const handleNavigateToQuestion = (index) => {
+    setReviewAnswers(false);
+    setCurrentIndex(index);
+    setShowImage(true);
+  };
+
   const currentQuestion = module[currentIndex];
 
-  // Convert byte data to base64 string for the image
   const base64Image = currentQuestion?.image
     ? `data:image/jpeg;base64,${currentQuestion.image}`
     : "";
@@ -67,136 +90,157 @@ const ModuleDetail = () => {
   };
 
   const reviewPage = () => {
+    const unansweredCount = module.filter(
+      (question) => !selectedAnswers[question.question_id]
+    ).length;
+
     return (
-      <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-        <h1 className="text-3xl font-bold text-gray-800 mb-6">Review Your Answers</h1>
-        {module.map((question) => (
-          <div key={question.question_id} className="mb-4">
-            <p className="text-lg text-gray-700">Question {question.question_id}</p>
-            <p className="text-lg text-gray-500">
-              Your answer: {selectedAnswers[question.question_id] || "No answer"}
-            </p>
+      //Review Page
+      <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+        <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">Module {moduleId}: {module.title}</h2>
+            <div className="bg-purple-600 text-white rounded-t-lg px-4 py-2 mb-4 text-center">
+              {unansweredCount} Questions Unanswered
+            </div>
+            {module.map((question, index) => (
+              <div key={question.question_id} className="flex items-center justify-between mb-4">
+                <p className="text-lg text-gray-700">
+                  Question {index + 1}
+                  {selectedAnswers[question.question_id] ? (
+                    <span className="text-green-500 ml-2">&#10003;</span>
+                  ) : (
+                    <span className="text-red-500 ml-2">&#10007;</span>
+                  )}
+                </p>
+                <button
+                  className="bg-blue-500 text-white px-4 py-2 rounded"
+                  onClick={() => handleNavigateToQuestion(index)}
+                >
+                  Go to Question
+                </button>
+              </div>
+            ))}
+            <div className="flex justify-between mt-4">
+              <button
+                className="bg-purple-600 text-white px-6 py-3 rounded"
+                onClick={handlePreviousQuestion}
+              >
+                Back
+              </button>
+              <button
+                className="bg-green-500 text-white px-6 py-3 rounded"
+                onClick={() => console.log("Submit Answers")} // Placeholder for submission logic
+              >
+                Submit
+              </button>
+            </div>
           </div>
-        ))}
-        <div className="flex justify-between mt-auto pt-4">
-          <button
-            className="bg-blue-500 text-white px-6 py-2 rounded"
-            onClick={handleBackToOverview}
-          >
-            Back to Module Overview
-          </button>
-          <button
-            className="bg-blue-500 text-white px-6 py-2 rounded"
-            
-          >
-            Submit Answers
-          </button>
-        </div>
       </div>
     );
   };
 
   return (
-    <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full">
+    //Module Overview Page
+    <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
       {!hasStarted ? (
         <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
           <h1 className="text-4xl font-bold text-gray-800 mb-6">
-            Module {moduleId}: {module.title} Module Title
+            Module {moduleId}: {module.title}
           </h1>
           <h2 className="text-2xl text-gray-800 mb-6">Textbook sections: Textbook sections</h2>
           <p className="text-lg text-gray-700 overflow-auto">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.
+            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+            sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+            est laborum.
           </p>
           <div className="flex flex-row flex-wrap items-center justify-center gap-4 mt-auto mt-4 pt-4">
             <div className="flex flex-row items-center gap-2 mr-auto">
               <div className="rounded-full bg-green-300 w-3 h-3"></div>
               {module.length} Questions
             </div>
-            <button
-              className="bg-blue-500 text-white px-6 py-2 rounded"
-              onClick={handleStartModule}
-            >
+            <button className="bg-blue-500 text-white px-6 py-2 rounded" onClick={handleStartModule}>
               Begin Module
             </button>
           </div>
         </div>
       ) : reviewAnswers ? (
-        // Show review answers page
-        reviewPage() 
+        reviewPage()
       ) : (
         <>
           {!showImage ? (
-            // Content page
-            <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-              <p className="text-lg text-gray-700">{currentQuestion.content}</p>
-              <div className="flex justify-between mt-auto pt-4">
-                {currentIndex === 0 ? (
+            //Content Page
+            <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+              <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+                <div className="flex-grow mb-4 overflow-auto">
+                  <p className="text-lg text-gray-700">{currentQuestion.content}</p>
+                </div>
+                <div className="flex justify-between mt-auto">
                   <button
-                    className="bg-blue-500 text-white px-6 py-2 rounded"
-                    onClick={handleBackToOverview}
-                  >
-                    Back to Module Overview
-                  </button>
-                ) : (
-                  <button
-                    className="bg-blue-500 text-white px-6 py-2 rounded"
+                    className="bg-black text-white px-6 py-3 rounded"
                     onClick={handlePreviousQuestion}
-                    disabled={currentIndex === 0 && !showImage}
                   >
                     Back
                   </button>
-                )}
-
-                <button
-                  className="bg-blue-500 text-white px-6 py-2 rounded"
-                  onClick={handleNext}
-                >
-                  Next
-                </button>
+                  <button className="bg-black text-white px-6 py-3 rounded" onClick={handleNext}>
+                    Next
+                  </button>
+                </div>
               </div>
             </div>
           ) : (
             // Question page
-            <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-              <img src={base64Image} alt="Question" className="mb-4" />
-              <div className="grid grid-cols-2 gap-4 mt-4">
-                {["A", "B", "C", "D"].map((choice) => (
+            <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+              <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+                <div className="flex-grow mb-4 flex justify-center items-center">
+                  {base64Image && (
+                    <img
+                      src={base64Image}
+                      alt="Question Image"
+                      className="object-contain h-full w-"
+                    />
+                  )}
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                  {["A", "B", "C", "D"].map((choice) => (
+                    <button
+                      key={choice}
+                      className={`px-4 py-2 rounded text-xl ${
+                        selectedAnswers[currentQuestion.question_id] === choice
+                          ? "bg-green-700"
+                          : "bg-green-500"
+                      } text-white`}
+                      onClick={() => handleAnswerSelect(currentQuestion.question_id, choice)}
+                    >
+                      {choice}
+                    </button>
+                  ))}
+                </div>
+                <div className="flex justify-between mt-4">
                   <button
-                    key={choice}
-                    className={`px-4 py-2 rounded ${
-                      selectedAnswers[currentQuestion.question_id] === choice
-                        ? "bg-green-700"
-                        : "bg-green-500"
-                    } text-white`}
-                    onClick={() => handleAnswerSelect(currentQuestion.question_id, choice)}
+                    className="bg-black text-white px-6 py-3 rounded"
+                    onClick={handlePreviousQuestion}
                   >
-                    {choice}
+                    Back
                   </button>
-                ))}
-              </div>
-              <div className="flex justify-between mt-auto pt-4">
-                <button
-                  className="bg-blue-500 text-white px-6 py-2 rounded"
-                  onClick={handlePreviousQuestion}
-                  disabled={currentIndex === 0 && !showImage}
-                >
-                  Back
-                </button>
-                {currentIndex === module.length - 1 ? (
-                  <button
-                    className="bg-blue-500 text-white px-6 py-2 rounded"
-                    onClick={handleReviewAnswers}
-                  >
-                    Review Answers
-                  </button>
-                ) : (
-                  <button
-                    className="bg-blue-500 text-white px-6 py-2 rounded"
-                    onClick={handleNextQuestion}
-                  >
-                    Next Question
-                  </button>
-                )}
+                  {currentIndex === module.length - 1 ? (
+                    <button
+                      className="bg-black text-white px-6 py-3 rounded"
+                      onClick={handleReviewAnswers}
+                    >
+                      Next
+                    </button>
+                  ) : (
+                    <button
+                      className="bg-black text-white px-6 py-3 rounded"
+                      onClick={handleNextQuestion}
+                    >
+                      Next
+                    </button>
+                  )}
+                </div>
               </div>
             </div>
           )}
