@@ -9,4 +9,6 @@ import com.calebnavarro2003.learnos.learnos_backend.Model.Module;
 @Repository
 public interface ModuleRepository extends JpaRepository<Module, Integer> {
     List<Module> findAll();
+
+    Module findById(int id);
 }

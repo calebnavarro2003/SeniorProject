@@ -10,6 +10,7 @@ import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/module")
@@ -21,6 +22,11 @@ public class ModuleController {
     @GetMapping("/allmodules")
     public List<Module> getAllModules() {
        return moduleService.getAllModules();
+    }
+
+    @GetMapping("/{id}")
+    public Module getModuleById(@PathVariable Integer id) {
+        return moduleService.getModuleById(id);
     }
     
 }
