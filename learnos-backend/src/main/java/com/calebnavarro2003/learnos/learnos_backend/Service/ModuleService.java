@@ -18,4 +18,8 @@ public class ModuleService {
     public List<Module> getAllModules(){
         return moduleRepository.findAll();
     }
+
+    public Module getModuleById(int id) {
+        return moduleRepository.findById(id);
+    }
 }
