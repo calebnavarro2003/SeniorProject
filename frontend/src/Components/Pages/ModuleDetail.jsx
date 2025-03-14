@@ -1,31 +1,226 @@
 import React, { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import axios from "axios";
+// Assuming backend endpoint is hosted on localhost:8080
+const BASE_URL = "http://localhost:8080";
+
+const ModuleOverview = ({ module, startModule }) => (
+  <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+    <h1 className="text-4xl font-bold text-gray-800 mb-6">
+      Module {module.moduleId}: {module.title}
+    </h1>
+    <h2 className="text-2xl text-gray-800 mb-6">Textbook sections: Textbook sections</h2>
+    <p className="text-lg text-gray-700 overflow-auto">
+      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
+      ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
+      ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
+      reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
+      sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
+      est laborum.
+    </p>
+    <div className="flex flex-row flex-wrap items-center justify-center gap-4 mt-auto mt-4 pt-4">
+      <div className="flex flex-row items-center gap-2 mr-auto">
+        <div className="rounded-full bg-green-300 w-3 h-3"></div>
+        {module.length} Questions
+      </div>
+      <button className="bg-blue-500 text-white px-6 py-2 rounded" onClick={startModule}>
+        Begin Module
+      </button>
+    </div>
+  </div>
+);
+
+const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion }) => (
+  <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+    <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">Module {moduleId} Results</h2>
+      {results.map((result, index) => (
+        <div key={result.questionId} className="flex items-center justify-between mb-4">
+          <p className="text-lg text-gray-700">
+            Question {index + 1}
+            {result.correct ? (
+              <span className="text-green-500 ml-2">&#10003;</span>
+            ) : (
+              <span className="text-red-500 ml-2">&#10007;</span>
+            )}
+          </p>
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => handleNavigateToQuestion(result.questionId)}
+          >
+            Review Question
+          </button>
+        </div>
+      ))}
+      <div className="mt-auto text-center text-2xl">
+        Grade: {Math.round((results.filter((r) => r.correct).length / results.length) * 100)}%
+      </div>
+    </div>
+  </div>
+);
+
+const ReviewPage = ({
+  module,
+  selectedAnswers,
+  unansweredCount,
+  handleNavigateToQuestion,
+  handlePreviousQuestion,
+  handleSubmitAnswers
+}) => (
+  <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+    <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">Module {module.moduleId}: {module.title}</h2>
+      <div className="bg-purple-600 text-white rounded-t-lg px-4 py-2 mb-4 text-center">
+        {unansweredCount} Questions Unanswered
+      </div>
+      {module.map((question, index) => (
+        <div key={question.question_id} className="flex items-center justify-between mb-4">
+          <p className="text-lg text-gray-700">
+            Question {index + 1}
+            {selectedAnswers[question.question_id] ? (
+              <span className="text-green-500 ml-2">&#10003;</span>
+            ) : (
+              <span className="text-red-500 ml-2">&#10007;</span>
+            )}
+          </p>
+          <button
+            className="bg-blue-500 text-white px-4 py-2 rounded"
+            onClick={() => handleNavigateToQuestion(index)}
+          >
+            Go to Question
+          </button>
+        </div>
+      ))}
+      <div className="flex justify-between mt-4">
+        <button
+          className="bg-purple-600 text-white px-6 py-3 rounded"
+          onClick={handlePreviousQuestion}
+        >
+          Back
+        </button>
+        <button
+          className="bg-green-500 text-white px-6 py-3 rounded"
+          onClick={handleSubmitAnswers}
+        >
+          Submit
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const ContentPage = ({ currentQuestion, handlePrevious, handleNext }) => (
+  <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+    <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+      <div className="flex-grow mb-4 overflow-auto">
+        <p className="text-lg text-gray-700">{currentQuestion.content}</p>
+      </div>
+      <div className="flex justify-between mt-auto">
+        <button
+          className="bg-black text-white px-6 py-3 rounded"
+          onClick={handlePrevious}
+        >
+          Back
+        </button>
+        <button className="bg-black text-white px-6 py-3 rounded" onClick={handleNext}>
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const QuestionPage = ({
+  currentQuestion,
+  base64Image,
+  selectedAnswers,
+  handleAnswerSelect,
+  handlePrevious,
+  handleNext
+}) => (
+  <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+    <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+      <div className="flex-grow mb-4 flex justify-center items-center">
+        {base64Image && (
+          <img
+            src={base64Image}
+            alt="Question Image"
+            className="object-contain h-full w-"
+          />
+        )}
+      </div>
+      <div className="grid grid-cols-2 gap-4">
+        {["A", "B", "C", "D"].map((choice) => (
+          <button
+            key={choice}
+            className={`px-4 py-2 rounded text-xl ${
+              selectedAnswers[currentQuestion.question_id] === choice
+                ? "bg-green-700"
+                : "bg-green-500"
+            } text-white`}
+            onClick={() => handleAnswerSelect(currentQuestion.question_id, choice)}
+          >
+            {choice}
+          </button>
+        ))}
+      </div>
+      <div className="flex justify-between mt-4">
+        <button
+          className="bg-black text-white px-6 py-3 rounded"
+          onClick={handlePrevious}
+        >
+          Back
+        </button>
+        <button
+          className="bg-black text-white px-6 py-3 rounded"
+          onClick={handleNext}
+        >
+          Next
+        </button>
+      </div>
+    </div>
+  </div>
+);
 
 const ModuleDetail = () => {
-  const { moduleId } = useParams();
+  const { moduleId, userId } = useParams();
   const [module, setModule] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showImage, setShowImage] = useState(false);
   const [selectedAnswers, setSelectedAnswers] = useState({});
   const [hasStarted, setHasStarted] = useState(false);
   const [reviewAnswers, setReviewAnswers] = useState(false);
-
+  const [submissionResults, setSubmissionResults] = useState(null);
+  const [completionStatus, setCompletionStatus] = useState(false);
+  
   useEffect(() => {
     axios
-      .get(`http://localhost:8080/questions/module/${moduleId}`, {
+      .get(`${BASE_URL}/questions/module/${moduleId}`, {
         withCredentials: true,
       })
       .then((response) => setModule(response.data))
       .catch((error) => console.error("Error fetching module details!", error));
-  }, [moduleId]);
+
+    axios
+      .get(`${BASE_URL}/answers/status/${moduleId}/${userId}`, {
+        withCredentials: true,
+      })
+      .then((response) => setCompletionStatus(!!response.data))
+      .catch((error) => console.error("Error checking module status!", error));
+  }, [moduleId, userId]);
 
   if (!module) return <div>Loading...</div>;
 
   const handleStartModule = () => {
-    setHasStarted(true);
-    setCurrentIndex(0);
-    setShowImage(false); // Starts with content of the first module
+    if (!completionStatus) {
+      setHasStarted(true);
+      setCurrentIndex(0);
+      setShowImage(false); // Starts with content of the first module
+    }
+  };
+
+  const handleReviewModule = () => {
+    setReviewAnswers(true);
   };
 
   const handleNext = () => {
@@ -80,169 +275,81 @@ const ModuleDetail = () => {
   };
 
   const currentQuestion = module[currentIndex];
-
-  const base64Image = currentQuestion?.image
-    ? `data:image/jpeg;base64,${currentQuestion.image}`
-    : "";
+  const base64Image = currentQuestion?.image ? `data:image/jpeg;base64,${currentQuestion.image}` : "";
 
   const handleReviewAnswers = () => {
     setReviewAnswers(true);
   };
 
-  const reviewPage = () => {
-    const unansweredCount = module.filter(
-      (question) => !selectedAnswers[question.question_id]
-    ).length;
+  const handleSubmitAnswers = () => {
+    const answers = Object.keys(selectedAnswers).map((questionId) => ({
+      questionId: parseInt(questionId),
+      letter: selectedAnswers[questionId],
+    }));
 
-    return (
-      //Review Page
-      <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
-        <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-          <h2 className="text-3xl font-bold text-gray-800 mb-6">Module {moduleId}: {module.title}</h2>
-            <div className="bg-purple-600 text-white rounded-t-lg px-4 py-2 mb-4 text-center">
-              {unansweredCount} Questions Unanswered
-            </div>
-            {module.map((question, index) => (
-              <div key={question.question_id} className="flex items-center justify-between mb-4">
-                <p className="text-lg text-gray-700">
-                  Question {index + 1}
-                  {selectedAnswers[question.question_id] ? (
-                    <span className="text-green-500 ml-2">&#10003;</span>
-                  ) : (
-                    <span className="text-red-500 ml-2">&#10007;</span>
-                  )}
-                </p>
-                <button
-                  className="bg-blue-500 text-white px-4 py-2 rounded"
-                  onClick={() => handleNavigateToQuestion(index)}
-                >
-                  Go to Question
-                </button>
-              </div>
-            ))}
-            <div className="flex justify-between mt-4">
-              <button
-                className="bg-purple-600 text-white px-6 py-3 rounded"
-                onClick={handlePreviousQuestion}
-              >
-                Back
-              </button>
-              <button
-                className="bg-green-500 text-white px-6 py-3 rounded"
-                onClick={() => console.log("Submit Answers")} // Placeholder for submission logic
-              >
-                Submit
-              </button>
-            </div>
-          </div>
-      </div>
-    );
+    axios
+      .post(`${BASE_URL}/answers/grade`, answers, {
+        withCredentials: true,
+        headers: {
+          'Content-Type': 'application/json'
+        }
+      })
+      .then((response) => {
+        setSubmissionResults(response.data); // Save the results to state
+        setReviewAnswers(false);
+        setHasStarted(false); // Navigate user once answers are submitted
+      })
+      .catch((error) => {
+        console.error("Error submitting answers:", error);
+      });
   };
 
+  const unansweredCount = module.filter((question) => !selectedAnswers[question.question_id]).length;
+
   return (
-    //Module Overview Page
     <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
       {!hasStarted ? (
-        <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-          <h1 className="text-4xl font-bold text-gray-800 mb-6">
-            Module {moduleId}: {module.title}
-          </h1>
-          <h2 className="text-2xl text-gray-800 mb-6">Textbook sections: Textbook sections</h2>
-          <p className="text-lg text-gray-700 overflow-auto">
-            Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-            ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-            ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-            reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-            sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-            est laborum.
-          </p>
-          <div className="flex flex-row flex-wrap items-center justify-center gap-4 mt-auto mt-4 pt-4">
-            <div className="flex flex-row items-center gap-2 mr-auto">
-              <div className="rounded-full bg-green-300 w-3 h-3"></div>
-              {module.length} Questions
-            </div>
-            <button className="bg-blue-500 text-white px-6 py-2 rounded" onClick={handleStartModule}>
-              Begin Module
-            </button>
-          </div>
-        </div>
+        submissionResults ? (
+          <ReviewResultsPage
+            results={submissionResults}
+            moduleId={moduleId}
+            handleNavigateToQuestion={handleNavigateToQuestion}
+          />
+        ) : (
+          <ModuleOverview
+            module={module}
+            startModule={handleStartModule}
+            reviewModule={handleReviewModule}
+            completionStatus={completionStatus}
+            userId={userId}
+          />
+        )
       ) : reviewAnswers ? (
-        reviewPage()
+        <ReviewPage
+          module={module}
+          selectedAnswers={selectedAnswers}
+          unansweredCount={unansweredCount}
+          handleNavigateToQuestion={handleNavigateToQuestion}
+          handlePreviousQuestion={handlePreviousQuestion}
+          handleSubmitAnswers={handleSubmitAnswers}
+        />
       ) : (
         <>
           {!showImage ? (
-            //Content Page
-            <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
-              <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-                <div className="flex-grow mb-4 overflow-auto">
-                  <p className="text-lg text-gray-700">{currentQuestion.content}</p>
-                </div>
-                <div className="flex justify-between mt-auto">
-                  <button
-                    className="bg-black text-white px-6 py-3 rounded"
-                    onClick={handlePreviousQuestion}
-                  >
-                    Back
-                  </button>
-                  <button className="bg-black text-white px-6 py-3 rounded" onClick={handleNext}>
-                    Next
-                  </button>
-                </div>
-              </div>
-            </div>
+            <ContentPage
+              currentQuestion={currentQuestion}
+              handlePrevious={handlePreviousQuestion}
+              handleNext={handleNext}
+            />
           ) : (
-            // Question page
-            <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
-              <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-                <div className="flex-grow mb-4 flex justify-center items-center">
-                  {base64Image && (
-                    <img
-                      src={base64Image}
-                      alt="Question Image"
-                      className="object-contain h-full w-"
-                    />
-                  )}
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                  {["A", "B", "C", "D"].map((choice) => (
-                    <button
-                      key={choice}
-                      className={`px-4 py-2 rounded text-xl ${
-                        selectedAnswers[currentQuestion.question_id] === choice
-                          ? "bg-green-700"
-                          : "bg-green-500"
-                      } text-white`}
-                      onClick={() => handleAnswerSelect(currentQuestion.question_id, choice)}
-                    >
-                      {choice}
-                    </button>
-                  ))}
-                </div>
-                <div className="flex justify-between mt-4">
-                  <button
-                    className="bg-black text-white px-6 py-3 rounded"
-                    onClick={handlePreviousQuestion}
-                  >
-                    Back
-                  </button>
-                  {currentIndex === module.length - 1 ? (
-                    <button
-                      className="bg-black text-white px-6 py-3 rounded"
-                      onClick={handleReviewAnswers}
-                    >
-                      Next
-                    </button>
-                  ) : (
-                    <button
-                      className="bg-black text-white px-6 py-3 rounded"
-                      onClick={handleNextQuestion}
-                    >
-                      Next
-                    </button>
-                  )}
-                </div>
-              </div>
-            </div>
+            <QuestionPage
+              currentQuestion={currentQuestion}
+              base64Image={base64Image}
+              selectedAnswers={selectedAnswers}
+              handleAnswerSelect={handleAnswerSelect}
+              handlePrevious={handlePreviousQuestion}
+              handleNext={currentIndex === module.length - 1 ? handleReviewAnswers : handleNextQuestion}
+            />
           )}
         </>
       )}
