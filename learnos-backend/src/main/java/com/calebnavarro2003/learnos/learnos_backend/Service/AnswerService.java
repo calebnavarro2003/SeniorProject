@@ -20,7 +20,10 @@ public class AnswerService {
         for (Answer answer : answers) {
             String realAnswer = answerRepository.findLetterByquestionId(answer.getQuestionId()).getLetter();
             boolean isCorrect = realAnswer.equals(answer.getLetter());
-            results.add(new QuestionResult(answer.getQuestionId(), isCorrect));
+
+            results.add(new QuestionResult(answer.getQuestionId(), isCorrect, answer.getUserId(), answer.getLetter()));
+
+            answerRepository.save(new QuestionResult(answer.getQuestionId(), isCorrect, answer.getUserId(), answer.getLetter(),answer.getQuestionId()));
         }
         return results;
     }

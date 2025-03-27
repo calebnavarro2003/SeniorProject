@@ -17,6 +17,7 @@ public class Answer {
     @Id
     private int answer_id;
     private int questionId;
+    private int userId;
 
     @Lob
     @Column(name = "answer", columnDefinition = "MEDIUMBLOB")
@@ -36,6 +37,14 @@ public class Answer {
 
     public int getAnswer_id() {
         return answer_id;
+    }
+
+    public int getUserId() {
+        return userId;
+    }
+
+    public void setUserId(int userId) {
+        this.userId = userId;
     }
 
     public void setAnswer_id(int answer_id) {
