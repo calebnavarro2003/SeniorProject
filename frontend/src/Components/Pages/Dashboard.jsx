@@ -1,10 +1,40 @@
 import React, { useEffect, useState } from 'react';
+import { messages } from '../../constants/WelcomeMessages.js'; // Adjust the import path as necessary
+
+// Utility function to get a random message from an array
+const getRandomMessage = (messageArray) => {
+  const randomIndex = Math.floor(Math.random() * messageArray.length);
+  return messageArray[randomIndex];
+};
+
+// Function to determine the current module based on the date
+const getCurrentModule = () => { 
+  /*
+  const currentDate = new Date();
+
+  // Example logic for determining the current module; replace with your actual logic
+  if (currentDate >= new Date('2023-01-01') && currentDate < new Date('2023-02-01')) {
+    return 'module0';
+  } else if (currentDate >= new Date('2023-02-01') && currentDate < new Date('2023-03-01')) {
+    return 'module1';
+  } else if (currentDate >= new Date('2023-03-01') && currentDate < new Date('2023-04-01')) {
+    return 'module2';
+  }  
+  */
+  // Add more conditions for additional modules
+  return 'module0'; // Default to module0 if no conditions match
+};
 
 export default function Dashboard() {
   const [showBanner, setShowBanner] = useState(false);
+  const [bannerMessage, setBannerMessage] = useState('Welcome to LearnOS!');
+  const [randomMessage, setRandomMessage] = useState('');
 
   useEffect(() => {
     // Logic to display the banner on first load
+    const moduleKey = getCurrentModule();
+    const selectedMessage = getRandomMessage(messages[moduleKey]);
+    setRandomMessage(selectedMessage);
     setShowBanner(true);
   }, []);
 
@@ -17,7 +47,7 @@ export default function Dashboard() {
       {/* Banner that appears each time a user navigates to the dashboard */}
       {showBanner && (
         <div className="mb-4 w-full bg-purple-600 text-white p-4 rounded-lg shadow-md flex justify-between items-center">
-          <span>This is a placeholder for future notifications we may add about important dates or module information!</span>
+          <span>{bannerMessage}</span>
           <button onClick={handleBannerClose} className="text-white font-bold">
             X
           </button>
@@ -26,8 +56,8 @@ export default function Dashboard() {
 
       {/* Top Section */}
       <div className="flex flex-col md:flex-row md:h-64 w-full bg-white rounded-lg shadow gap-4 overflow-hidden">
-        <div className="md:w-3/5 w-full flex items-center text-3xl px-6 py-4">
-          Boost your learning - just one short lesson at a time 🚀
+        <div className="md:w-3/5 w-full flex flex-col justify-center text-3xl px-6 py-4">
+          <div className="mb-4">{randomMessage}</div>
         </div>
         <div className="md:w-2/5 md:h-auto h-40 w-full flex justify-center items-center rounded md:pt-4 pb-4">
           <img
