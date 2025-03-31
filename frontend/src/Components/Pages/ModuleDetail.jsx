@@ -219,24 +219,46 @@ const ModuleDetail = () => {
   const [reviewAnswers, setReviewAnswers] = useState(false);
   const [submissionResults, setSubmissionResults] = useState(null);
   const [completionStatus, setCompletionStatus] = useState(false);
+  const [userEmail, setUserEmail] = useState(null); // State to store user email
+  const [userDetails, setUserDetails] = useState({ userId: null, email: null }); // State to store user ID and email
   
+  //Fetch Requests
+  {
+  // Fetch user email
   useEffect(() => {
     axios
-      .get(`${BASE_URL}/questions/module/${moduleId}`, {
-        withCredentials: true,
-      })
-      .then((response) => setModule(response.data))
-      .catch((error) => console.error("Error fetching module details!", error));
+      .get(`${BASE_URL}/get-user-info`, { withCredentials: true })
+      .then(response => setUserEmail(response.data.email))
+      .catch(error => console.error("Error fetching user info!", error));
+  }, []);
+  
+  // Fetch user ID using email
+  useEffect(() => {
+    if (userEmail) {
+      const encodedEmail = encodeURIComponent(userEmail);
+      axios
+        .get(`${BASE_URL}/${encodedEmail}/id`, { withCredentials: true })
+        .then(response => setUserDetails({ userId: response.data, email: userEmail }))
+        .catch(error => console.error("Error fetching user ID!", error));
+    }
+  }, [userEmail]);
 
+  useEffect(() => {
     axios
-      .get(`${BASE_URL}/answers/status/${moduleId}/${userId}`, {
-        withCredentials: true,
-      })
-      .then((response) => setCompletionStatus(!!response.data))
-      .catch((error) => console.error("Error checking module status!", error));
-  }, [moduleId, userId]);
+      .get(`${BASE_URL}/questions/module/${moduleId}`, { withCredentials: true })
+      .then(response => setModule(response.data))
+      .catch(error => console.error("Error fetching module details!", error));
+
+    if (userDetails.userId) {
+      axios
+        .get(`${BASE_URL}/answers/status/${moduleId}/${userDetails.userId}`, { withCredentials: true })
+        .then(response => setCompletionStatus(!!response.data))
+        .catch(error => console.error("Error checking module status!", error));
+    }
+  }, [moduleId, userDetails.userId]);
 
   if (!module) return <div>Loading...</div>;
+  }
 
   const handleStartModule = () => {
     if (!completionStatus) {
@@ -312,6 +334,7 @@ const ModuleDetail = () => {
     const answers = Object.keys(selectedAnswers).map((questionId) => ({
       questionId: parseInt(questionId),
       letter: selectedAnswers[questionId],
+      userId: userDetails.userId
     }));
 
     axios

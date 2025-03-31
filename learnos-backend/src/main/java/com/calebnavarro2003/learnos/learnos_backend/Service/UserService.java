@@ -16,11 +16,11 @@ public class UserService {
     }
 
     public User getUserByEmail(String email) {
-        return userRepository.findIdByEmail(email);
+        return userRepository.findByEmail(email);
     }
 
     public Boolean authenticate(String email, Long id) {
-        User user = userRepository.findIdByEmail(email);
+        User user = userRepository.findByEmail(email);
         return user != null && user.getId().equals(id);
     }
 }
