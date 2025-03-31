@@ -2,14 +2,17 @@ package com.calebnavarro2003.learnos.learnos_backend.Model;
 
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "responses")
+@IdClass(QuestionResultId.class)
 public class QuestionResult {
     @Id
     private int questionId;
     private boolean isCorrect;
+    @Id
     private int userId;
     private String letter;
     private int selected_answer_id;

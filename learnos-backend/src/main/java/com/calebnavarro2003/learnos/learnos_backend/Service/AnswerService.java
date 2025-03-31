@@ -9,12 +9,15 @@ import com.calebnavarro2003.learnos.learnos_backend.Model.Answer;
 import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleStatistic;
 import com.calebnavarro2003.learnos.learnos_backend.Model.QuestionResult;
 import com.calebnavarro2003.learnos.learnos_backend.Repository.AnswerRepository;
+import com.calebnavarro2003.learnos.learnos_backend.Repository.QuestionResultRepository;
 
 @Service
 public class AnswerService {
     
     @Autowired
     private AnswerRepository answerRepository;
+    @Autowired
+    private QuestionResultRepository questionResultRepository;
 
     public List<QuestionResult> submitAnswers(List<Answer> answers) {
         List<QuestionResult> results = new ArrayList<>();
@@ -24,7 +27,8 @@ public class AnswerService {
 
             results.add(new QuestionResult(answer.getQuestionId(), isCorrect, answer.getUserId(), answer.getLetter()));
 
-            answerRepository.save(new QuestionResult(answer.getQuestionId(), isCorrect, answer.getUserId(), answer.getLetter(),answer.getQuestionId()));
+            QuestionResult questionResult = new QuestionResult(answer.getQuestionId(), isCorrect, answer.getUserId(), answer.getLetter(),answer.getQuestionId());
+            questionResultRepository.save(questionResult);
         }
         return results;
     }
