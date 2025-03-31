@@ -24,7 +24,7 @@ const ModulesPage = () => {
   };
 
   return (
-    <div className=" flex flex-col items-center justify-start overflow-auto bg-gray-100">
+    <div className="flex flex-col items-center justify-start overflow-auto bg-gray-100 h-full">
       <h1 className="w-full text-center text-4xl font-bold text-gray-800 py-4">
         Available Modules
       </h1>
