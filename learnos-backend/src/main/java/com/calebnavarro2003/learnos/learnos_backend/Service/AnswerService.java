@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.calebnavarro2003.learnos.learnos_backend.Model.Answer;
+import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleStatistic;
 import com.calebnavarro2003.learnos.learnos_backend.Model.QuestionResult;
 import com.calebnavarro2003.learnos.learnos_backend.Repository.AnswerRepository;
 
@@ -26,6 +27,10 @@ public class AnswerService {
             answerRepository.save(new QuestionResult(answer.getQuestionId(), isCorrect, answer.getUserId(), answer.getLetter(),answer.getQuestionId()));
         }
         return results;
+    }
+
+    public List<ModuleStatistic> getModuleStatistics(Integer moduleId) {
+        return answerRepository.getCorrectPercentageByModule(moduleId);
     }
 
 }

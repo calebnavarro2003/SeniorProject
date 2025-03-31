@@ -2,10 +2,16 @@ package com.calebnavarro2003.learnos.learnos_backend.Repository;
 
 
 
+import java.util.List;
+import java.util.Map;
+
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
 import com.calebnavarro2003.learnos.learnos_backend.Model.Answer;
+import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleStatistic;
 import com.calebnavarro2003.learnos.learnos_backend.Model.QuestionResult;
 
 
@@ -13,4 +19,17 @@ import com.calebnavarro2003.learnos.learnos_backend.Model.QuestionResult;
 public interface AnswerRepository extends JpaRepository<Answer, Integer> {
     Answer findLetterByquestionId(int questionId);
     void save(QuestionResult questionResult);
+    @Query(value = """
+        SELECT 
+            q.question_id AS questionId,
+            COUNT(r.response_id) AS totalResponses,
+            SUM(r.is_correct) AS correctResponses,
+            (SUM(r.is_correct) * 1.0 / COUNT(r.response_id)) * 100 AS correctPercentage
+        FROM questions q
+        LEFT JOIN responses r ON q.question_id = r.question_id
+        WHERE q.module_id = :moduleId
+        GROUP BY q.question_id, q.content
+        LIMIT 100
+        """, nativeQuery = true)
+    List<ModuleStatistic> getCorrectPercentageByModule(@Param("moduleId") Integer moduleId);
 }
