@@ -1,15 +1,15 @@
-import React, { useEffect, useState } from 'react';
-import ProgressCircle from '../../ProgressCircle';
+import ModuleCarousel from '../ModuleCarousel';
+import ProgressCircle from '../ProgressCircle';
 
 export default function Dashboard() {
   const sampleModules = [
-    { id: 1, title: "Module 1", description: "Introduction to React" },
-    { id: 2, title: "Module 2", description: "State & Props" },
-    { id: 3, title: "Module 3", description: "Hooks & Context API" },
-    { id: 4, title: "Module 4", description: "Advanced Patterns" },
-    { id: 5, title: "Module 4", description: "Advanced Patterns" },
-    { id: 6, title: "Module 4", description: "Advanced Patterns" },
-    { id: 7, title: "Module 4", description: "Advanced Patterns" },
+    { id: 1, title: "Module 1"},
+    { id: 2, title: "Module 2"},
+    { id: 3, title: "Module 3"},
+    { id: 4, title: "Module 4"},
+    { id: 5, title: "Module 5"},
+    { id: 6, title: "Module 6"},
+    { id: 7, title: "Module 7"},
 ];
 
   return (
@@ -27,25 +27,7 @@ export default function Dashboard() {
 
       {/* Bottom Section */}
       <div className="grid grid-row-1 h-full overflow-x-auto">
-        <div className='flex flex-row overflow-x-auto h-full w-full gap-4'>
-          {
-          sampleModules.map((module) => {
-            return (
-              <div
-              key={module.id}
-              className="flex flex-col flex-shrink-0 w-72 h-full bg-white shadow rounded-lg p-6"
-            >
-              <h2 className="text-xl font-bold">{module.title}</h2>
-              <div className='flex flex-col h-full items-center gap-2 text-large my-8 md:my-8 md:justify-center'>
-                Completion Rate
-                <ProgressCircle value={0.85} size={160} />
-              </div>
-              <button className='mt-auto ml-auto hover:underline'>View Insights &rarr;</button>
-            </div>
-            )
-          })
-        }
-        </div>
+        <ModuleCarousel modules={sampleModules} />
       </div>
     </div>
   );
