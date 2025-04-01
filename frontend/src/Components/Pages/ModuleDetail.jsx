@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { useParams } from "react-router-dom";
+import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
 import { nudgingMessages } from "../../constants/NudgingMessages";  // Import nudging messages
 
@@ -23,31 +23,31 @@ const getNudgingMessage = (grade) => {
   return messageCategory[Math.floor(Math.random() * messageCategory.length)];
 };
 
-const ModuleOverview = ({ module, startModule }) => (
-  <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-    <h1 className="text-4xl font-bold text-gray-800 mb-6">
-      Module {module.moduleId}: {module.title}
-    </h1>
-    <h2 className="text-2xl text-gray-800 mb-6">Textbook sections: Textbook sections</h2>
-    <p className="text-lg text-gray-700 overflow-auto">
-      Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt
-      ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation
-      ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in
-      reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur
-      sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id
-      est laborum.
-    </p>
-    <div className="flex flex-row flex-wrap items-center justify-center gap-4 mt-auto mt-4 pt-4">
-      <div className="flex flex-row items-center gap-2 mr-auto">
-        <div className="rounded-full bg-green-300 w-3 h-3"></div>
-        {module.length} Questions
+const ModuleOverview = ({ module, startModule }) => {
+  //Fetch for Module Info for overview page
+  const location = useLocation();
+  const {title, description, id} = location.state || {}; //Extract state variables from Module Page info
+
+  return (
+    <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+      <h1 className="text-4xl font-bold text-gray-800 mb-6">
+        Module {id}: {title}
+      </h1>
+      <p className="text-lg text-gray-700 overflow-auto">
+        {description}
+      </p>
+      <div className="flex flex-row flex-wrap items-center justify-center gap-4 mt-auto mt-4 pt-4">
+        <div className="flex flex-row items-center gap-2 mr-auto">
+          <div className="rounded-full bg-green-300 w-3 h-3"></div>
+          {module.length} Questions
+        </div>
+        <button className="bg-blue-500 text-white px-6 py-2 rounded" onClick={startModule}>
+          Begin Module
+        </button>
       </div>
-      <button className="bg-blue-500 text-white px-6 py-2 rounded" onClick={startModule}>
-        Begin Module
-      </button>
     </div>
-  </div>
-);
+  )
+};
 
 const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion }) => {
   const grade = Math.round((results.filter((r) => r.correct).length / results.length) * 100);
@@ -249,11 +249,9 @@ const ModuleDetail = () => {
       .then(response => setModule(response.data))
       .catch(error => console.error("Error fetching module details!", error));
 
+    //Placeholder for a fetch request to check if a user has taken this module yet.
     if (userDetails.userId) {
-      axios
-        .get(`${BASE_URL}/answers/status/${moduleId}/${userDetails.userId}`, { withCredentials: true })
-        .then(response => setCompletionStatus(!!response.data))
-        .catch(error => console.error("Error checking module status!", error));
+    
     }
   }, [moduleId, userDetails.userId]);
 
