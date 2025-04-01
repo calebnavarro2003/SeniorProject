@@ -9,7 +9,7 @@ import InstructorSidebar from "./Components/Instructor/InstructorSidebar";
 import InstructorDashboard from "./Components/Instructor/Pages/InstructorDashboard";
 // import InstructorSettings from "./Components/Instructor/Pages/InstructorSettings";
 // import InstructorModules from "./Components/Instructor/Pages/InstructorModules";
-// import InstructorModuleDetail from "./Components/Instructor/Pages/InstructorModuleDetail";
+import InstructorModuleDetail from "./Components/Instructor/Pages/InstructorModulePage";
 
 function App() {
   const location = useLocation();
@@ -34,8 +34,8 @@ function App() {
             {/* Instructor Routes */}
             <Route path="/admin/dashboard" element={<InstructorDashboard />} />
             {/* <Route path="/admin/settings" element={<InstructorSettings />} />
-            <Route path="/admin/modules" element={<InstructorModules />} />
-            <Route path="/admin/modules/:moduleID" element={<InstructorModuleDetail />} /> */}
+            <Route path="/admin/modules" element={<InstructorModules />} /> */}
+            <Route path="/admin/module/:moduleID" element={<InstructorModuleDetail />} />
           </Routes>
         </div>
       </div>
