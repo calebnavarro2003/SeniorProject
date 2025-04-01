@@ -5,6 +5,7 @@ import { useNavigate, useLocation } from 'react-router-dom';
 function ModulePage() {
   const navigate = useNavigate();
   const location = useLocation();
+  const moduleId = location.pathname.split('/')[location.pathname.split('/').length - 1]
 
   const sampleQuestions = [
     { id: 1, title: "Question 1"},
@@ -18,6 +19,10 @@ function ModulePage() {
 
   const handleViewInsights = (questionId) => {
     navigate(`${location.pathname}/question/${questionId}`)
+  }
+
+  const handleEditModule = (moduleId) => {
+    navigate(`/admin/module/${moduleId}/edit`)
   }
 
   return (
@@ -37,6 +42,7 @@ function ModulePage() {
             <ProgressCircle value={0.85} size={160} />
           </div>
         </div>
+        <button className='text-lg ml-auto mt-auto rounded-lg shadow text-white p-3 bg-purple-600 hover:bg-purple-700' onClick={() => handleEditModule(moduleId)}>Edit Module</button>
       </div>
       
 
