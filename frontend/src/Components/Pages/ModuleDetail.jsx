@@ -92,11 +92,13 @@ const ReviewPage = ({
   unansweredCount,
   handleNavigateToQuestion,
   handlePreviousQuestion,
-  handleSubmitAnswers
+  handleSubmitAnswers,
 }) => (
   <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
     <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
-      <h2 className="text-3xl font-bold text-gray-800 mb-6">Module {module.moduleId}: {module.title}</h2>
+      <h2 className="text-3xl font-bold text-gray-800 mb-6">
+        Module {module.moduleId}: {module.title}
+      </h2>
       <div className="bg-purple-600 text-white rounded-t-lg px-4 py-2 mb-4 text-center">
         {unansweredCount} Questions Unanswered
       </div>
@@ -118,15 +120,15 @@ const ReviewPage = ({
           </button>
         </div>
       ))}
-      <div className="flex justify-between mt-4">
+      <div className="flex mt-auto">
         <button
-          className="bg-purple-600 text-white px-6 py-3 rounded"
+          className="bg-black text-white px-6 py-3 rounded "
           onClick={handlePreviousQuestion}
         >
           Back
         </button>
         <button
-          className="bg-green-500 text-white px-6 py-3 rounded"
+          className="bg-green-500 text-white px-6 py-3 rounded ml-4 ml-auto"
           onClick={handleSubmitAnswers}
         >
           Submit
@@ -328,7 +330,14 @@ const ModuleDetail = () => {
     setReviewAnswers(true);
   };
 
+  const unansweredCount = module.filter((question) => !selectedAnswers[question.question_id]).length;
+  
   const handleSubmitAnswers = () => {
+    if (unansweredCount > 0) {
+      alert("Please answer all questions before submitting.");
+      return;
+    }
+    
     const answers = Object.keys(selectedAnswers).map((questionId) => ({
       questionId: parseInt(questionId),
       letter: selectedAnswers[questionId],
@@ -351,8 +360,6 @@ const ModuleDetail = () => {
         console.error("Error submitting answers:", error);
       });
   };
-
-  const unansweredCount = module.filter((question) => !selectedAnswers[question.question_id]).length;
 
   return (
     <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
