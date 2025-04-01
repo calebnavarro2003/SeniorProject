@@ -56,14 +56,24 @@ export default function Dashboard() {
 
       {/* Top Section */}
       <div className="flex flex-col md:flex-row md:h-64 w-full bg-white rounded-lg shadow gap-4 overflow-hidden">
-        <div className="md:w-3/5 w-full flex flex-col justify-center text-3xl px-6 py-4">
+        <div className="md:w-1/2 w-full flex flex-col justify-center text-3xl px-6 py-4">
           <div className="mb-4">{randomMessage}</div>
         </div>
-        <div className="md:w-2/5 md:h-auto h-40 w-full flex justify-center items-center rounded md:pt-4 pb-4">
+        <div className="md:w-1/2 md:h-auto h-40 w-full flex justify-center items-center rounded md:pt-4 pb-4">
           <img
-            className="object-contain max-w-full max-h-full"
-            src="./gold-medal.png"
+            className="object-contain md:w-1/3 max-h-full"
+            src="./gold.jpg"
             alt="gold medal reward"
+          />
+          <img
+            className="object-contain md:w-1/3 max-h-full"
+            src="./silver.jpg"
+            alt="silver medal reward"
+          />
+          <img
+            className="object-contain md:w-1/3 max-h-full"
+            src="./bronze.jpg"
+            alt="bronze medal reward"
           />
         </div>
       </div>

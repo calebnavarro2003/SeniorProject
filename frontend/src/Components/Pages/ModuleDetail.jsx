@@ -23,6 +23,18 @@ const getNudgingMessage = (grade) => {
   return messageCategory[Math.floor(Math.random() * messageCategory.length)];
 };
 
+const getMedal = (grade) => {
+  if (grade >= 90) {
+    return "/gold.jpg";
+  } else if (grade >= 80) {
+    return "/silver.jpg";
+  } else if (grade >= 65) {
+    return "/bronze.jpg";
+  } else {
+    return null;
+  }
+};
+
 const ModuleOverview = ({ module, startModule }) => {
   //Fetch for Module Info for overview page
   const location = useLocation();
@@ -52,6 +64,7 @@ const ModuleOverview = ({ module, startModule }) => {
 const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion }) => {
   const grade = Math.round((results.filter((r) => r.correct).length / results.length) * 100);
   const message = getNudgingMessage(grade);
+  const medalImagePath = getMedal(grade);
 
   return (
     <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
@@ -78,6 +91,11 @@ const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion }) => {
         <div className="mt-auto text-center text-2xl">
           Grade: {grade}%
         </div>
+        {medalImagePath && (
+          <div className="mt-2 mb-4">
+            <img src={medalImagePath} alt="Medal" className="mx-auto" style={{ width: '275px', height: 'auto' }} />
+          </div>
+        )}
         <div className="mt-4 p-4 bg-yellow-100 text-yellow-800 text-lg rounded-lg">
           {message}
         </div>
@@ -337,7 +355,7 @@ const ModuleDetail = () => {
       alert("Please answer all questions before submitting.");
       return;
     }
-    
+
     const answers = Object.keys(selectedAnswers).map((questionId) => ({
       questionId: parseInt(questionId),
       letter: selectedAnswers[questionId],
