@@ -4,6 +4,7 @@ import axios from "axios";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch the modules from the backend
@@ -17,14 +18,12 @@ const ModulesPage = () => {
       });
   }, []);
 
-  const navigate = useNavigate();
-
   const handleNavigateToModule = (moduleId, moduleTitle, moduleDescription) => {
     navigate(`/admin/module/${moduleId}`, { state: { title: moduleTitle, description: moduleDescription } }); // Pass module details as state
   };
 
   const handleNewModule = () => {
-    navigate('/admin/module/new')
+    navigate('/admin/module/new', { state: { modules }})
   }
 
   return (

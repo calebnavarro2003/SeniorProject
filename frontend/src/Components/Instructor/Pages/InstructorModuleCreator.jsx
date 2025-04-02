@@ -1,15 +1,27 @@
 import React, { useState } from "react";
+import { useLocation, useNavigate } from "react-router-dom";
+
 
 export default function CreateModule() {
+    const location = useLocation()
+    const navigate = useNavigate()
+
     const [moduleId, setModuleId] = useState("");
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
     const handleSubmit = (e) => {
         e.preventDefault();
-        // Handle the submission logic here
 
-    
+        const newModule = {
+            moduleId: moduleId, 
+            title: title,
+            description: description, 
+        }
+
+        // Add API call to create new module
+
+        navigate('/admin/modules')
     };
 
     return (
