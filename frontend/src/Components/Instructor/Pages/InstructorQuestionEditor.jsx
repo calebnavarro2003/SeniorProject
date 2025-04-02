@@ -7,12 +7,13 @@ function InstructorQuestionEditor() {
     const modulePath = location.pathname.split('/').slice(0, -3).join('/')
 
     const moduleInfo = location.state?.moduleInfo || {}
-    const id = moduleInfo.questions?.length + 1
+    const id = location.state?.questionId || moduleInfo.questions?.length + 1
+    const currentQuestion = moduleInfo?.questions.find((question) => question.id === id);
 
-    const [description, setDescription] = useState("");
-    const [questionType, setQuestionType] = useState(null); // 'trueFalse' or 'multipleChoice'
-    const [correctAnswer, setCorrectAnswer] = useState(null);
-    const [image, setImage] = useState(null)
+    const [description, setDescription] = useState(currentQuestion?.description || "");
+    const [questionType, setQuestionType] = useState(currentQuestion?.type || null); // 'trueFalse' or 'multipleChoice'
+    const [correctAnswer, setCorrectAnswer] = useState(currentQuestion?.correctAnswer || null);
+    const [image, setImage] = useState(currentQuestion?.image || null)
 
     const handleSubmit = (e) => {
         e.preventDefault();
@@ -26,9 +27,21 @@ function InstructorQuestionEditor() {
             image: image
         }
 
+        let updatedQuestions;
+
+        if (location.state?.questionId) {
+            // Editing an existing question
+            updatedQuestions = moduleInfo.questions.map(q =>
+                q.id === location.state.questionId ? { ...q, ...question } : q
+            );
+        } else {
+            // Adding a new question
+            updatedQuestions = [...moduleInfo.questions, question];
+        }
+
         const updatedModuleInfo = {
             ...moduleInfo,
-            questions: [...moduleInfo.questions, question]
+            questions: updatedQuestions
         };
 
         navigate(modulePath + "/edit", {state: { updatedModuleInfo }} )
@@ -136,13 +149,13 @@ function InstructorQuestionEditor() {
                             className="mt-auto md:mr-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition"
                             onClick={() => handleDiscardQuestion()}
                         >
-                            Discard Question
+                            {currentQuestion ? "Discard Changes" : "Discard Question"}
                         </button>
                         <button
                             type="submit"
                             className="mt-auto md:ml-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition"
                         >
-                            Create Question
+                            {currentQuestion ? "Update Question" : "Create Question"}
                         </button>
                     </div>
                 </form>
