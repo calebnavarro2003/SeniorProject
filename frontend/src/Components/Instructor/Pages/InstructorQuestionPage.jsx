@@ -8,12 +8,14 @@ function InstructorQuestionPage() {
     const pathArr = location.pathname.split('/')
     const questionId = pathArr[(pathArr.length) - 1]
 
+    // Need API call to get overall accurracy and response % breakdown
     const sampleResponses = [
         {id: "A", responseFraction: 0.78, correct: true},
         {id: "B", responseFraction: 0.10, correct: false},
         {id: "C", responseFraction: 0.12, correct: false},
         {id: "D", responseFraction: 0.0, correct: false},
     ]
+    const overallAccurracy = 0.78
 
     const returnToModule = () => {
         navigate(pathArr.slice(0, -2).join('/'))
@@ -25,10 +27,9 @@ function InstructorQuestionPage() {
             <div className='text-3xl'>Question {questionId}</div>
             <div className='flex flex-col justify-center text-2xl gap-4 mx-auto'>
                 Overall Accuracy
-                <ProgressCircle value={0.78} size={180}/>
+                <ProgressCircle value={overallAccurracy} size={180}/>
             </div>
             <div className="flex flex-col w-full p-4 gap-2 mt-auto">
-                {/* Need to add call to fetch the responses to the current question */}
                 {sampleResponses.map((response) => {
                     return (
                         <div 

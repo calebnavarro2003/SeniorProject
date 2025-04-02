@@ -21,7 +21,7 @@ const ModuleCarousel = ({ modules }) => {
               <h2 className="text-xl font-semibold">{module.title}</h2>
               <div className='flex flex-col h-full items-center gap-2 text-large my-8 md:my-8 md:justify-center'>
                 Completion Rate
-                <ProgressCircle value={0.85} size={160} />
+                <ProgressCircle value={module.completionRate} size={160} />
               </div>
               <button className='mt-auto ml-auto hover:underline' onClick={() => handleViewInsights(module.id)}>View Insights &rarr;</button>
             </div>

@@ -8,7 +8,9 @@ function ModulePage() {
   const moduleId = location.pathname.split('/')[location.pathname.split('/').length - 1]
   const moduleTitle = location.state?.title
 
-  // Need to add API call to fetch questions and question data
+  // Need to add API call to fetch module data (module overall accuracy, completion rate, questions)
+  const completionRate = 0.73
+  const totalAccurracy = 0.85
   const sampleQuestions = [
     { id: 1, title: "Question 1", accuracy: 0.67},
     { id: 2, title: "Question 2", accuracy: 0.67},
@@ -35,13 +37,11 @@ function ModulePage() {
         <div className="flex flex-col md:flex-row p-4 md:h-64 w-full  gap-4 ">
           <div className="md:w-1/2 md:h-auto h-40 w-full flex flex-col justify-center items-center text-xl gap-2 mb-4 md:mb-0">
             Completion Rate
-            {/* need to add a call for completion rate for this specific module */}
-            <ProgressCircle value={0.85} size={160} />
+            <ProgressCircle value={completionRate} size={160} />
           </div>
           <div className="md:w-1/2 md:h-auto h-40 w-full flex flex-col justify-center items-center text-xl gap-2 mb-4 md:mb-0">
             Overall Accuracy
-            {/* need to add a call for total accuracy for this specific module */}
-            <ProgressCircle value={0.85} size={160} />
+            <ProgressCircle value={totalAccurracy} size={160} />
           </div>
         </div>
         <button className='text-lg ml-auto mt-auto rounded-lg shadow text-white p-3 bg-purple-600 hover:bg-purple-700' onClick={() => handleEditModule(moduleId)}>Edit Module</button>

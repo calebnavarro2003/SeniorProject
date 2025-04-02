@@ -6,7 +6,7 @@ function InstructorModuleEditor() {
     const location = useLocation();
     const modulePath = location.pathname.split('/').slice(0, -1).join('/');
 
-    // Initialize state with either passed data or default values
+    // Initialize state with either passed data or default temp values (which will be an API call in actuality)
     const [moduleInfo, setModuleInfo] = useState(
         location.state?.updatedModuleInfo || {
             title: "Module 0: Computer Hardware Fundamentals",

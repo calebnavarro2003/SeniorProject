@@ -3,14 +3,15 @@ import ProgressCircle from '../ProgressCircle';
 
 export default function Dashboard() {
   // will have to add some call to fetch the modules and their completion rates
+  const overallAccuracy = 0.88 
   const sampleModules = [
-    { id: 1, title: "Module 1"},
-    { id: 2, title: "Module 2"},
-    { id: 3, title: "Module 3"},
-    { id: 4, title: "Module 4"},
-    { id: 5, title: "Module 5"},
-    { id: 6, title: "Module 6"},
-    { id: 7, title: "Module 7"},
+    { id: 1, title: "Module 1", completionRate: 0.78},
+    { id: 2, title: "Module 2", completionRate: 0.78},
+    { id: 3, title: "Module 3", completionRate: 0.78},
+    { id: 4, title: "Module 4", completionRate: 0.78},
+    { id: 5, title: "Module 5", completionRate: 0.78},
+    { id: 6, title: "Module 6", completionRate: 0.78},
+    { id: 7, title: "Module 7", completionRate: 0.78},
   ];
 
   return (
@@ -23,7 +24,7 @@ export default function Dashboard() {
         <div className="md:w-2/5 md:h-auto h-40 w-full flex flex-col justify-center items-center text-xl gap-2 mb-4 md:mb-0">
           Overall Accuracy
           {/* need to add a call for total accuracy across all modules */}
-          <ProgressCircle value={0.85} size={160} />
+          <ProgressCircle value={overallAccuracy} size={160} />
         </div>
       </div>
 

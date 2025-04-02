@@ -7,7 +7,6 @@ import ModuleDetail from "./Components/Pages/ModuleDetail";
 import Sidebar from "./Components/Sidebar";
 import InstructorSidebar from "./Components/Instructor/InstructorSidebar";
 import InstructorDashboard from "./Components/Instructor/Pages/InstructorDashboard";
-// import InstructorSettings from "./Components/Instructor/Pages/InstructorSettings";
 import InstructorModules from "./Components/Instructor/Pages/InstructorModulesPage";
 import InstructorModuleDetail from "./Components/Instructor/Pages/InstructorModulePage";
 import InstructorQuestionDetail from "./Components/Instructor/Pages/InstructorQuestionPage"
@@ -37,7 +36,7 @@ function App() {
 
             {/* Instructor Routes */}
             <Route path="/admin/dashboard" element={<InstructorDashboard />} />
-            {/* <Route path="/admin/settings" element={<InstructorSettings />} /> */}
+            <Route path="/admin/settings" element={<Settings />} />
             <Route path="/admin/modules" element={<InstructorModules />} />
             <Route path="/admin/module/new" element={<InstructorModuleCreator />} />
             <Route path="/admin/module/:moduleID" element={<InstructorModuleDetail />} />
