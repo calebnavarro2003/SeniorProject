@@ -13,6 +13,7 @@ import InstructorModuleDetail from "./Components/Instructor/Pages/InstructorModu
 import InstructorQuestionDetail from "./Components/Instructor/Pages/InstructorQuestionPage"
 import InstructorModuleCreator from "./Components/Instructor/Pages/InstructorModuleCreator"
 import InstructorModuleEditor from "./Components/Instructor/Pages/InstructorModuleEditor"
+import InstructorQuestionEditor from "./Components/Instructor/Pages/InstructorQuestionEditor"
 
 function App() {
   const location = useLocation();
@@ -42,6 +43,7 @@ function App() {
             <Route path="/admin/module/:moduleID" element={<InstructorModuleDetail />} />
             <Route path="/admin/module/:moduleID/edit" element={<InstructorModuleEditor />} />
             <Route path="/admin/module/:moduleID/question/:questionID" element={<InstructorQuestionDetail />} />
+            <Route path="/admin/module/:moduleID/question/:questionID/edit" element={<InstructorQuestionEditor />} />
           </Routes>
         </div>
       </div>

@@ -1,7 +1,14 @@
 import React from 'react'
+import { useNavigate, useLocation } from 'react-router-dom';
+
 
 function InstructorModuleEditor() {
-    const moduleInfo = {
+    const navigate = useNavigate()
+    const location = useLocation()
+    const modulePath = location.pathname.split('/').slice(0, -1).join('/')
+
+    // Add call to grab current module information
+    const moduleInfo = location.state?.updatedModuleInfo ? location.state?.updatedModuleInfo : {
         title: "Module 0: Computer Hardware Fundamentals",
         description: "Description of module X. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
         questions: [
@@ -10,6 +17,15 @@ function InstructorModuleEditor() {
             { id: 3, title: "Question 3", description: "Description of question 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "},
             { id: 4, title: "Question 4", description: "Description of question 4. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. "},
         ],
+    }
+
+    const handleSaveModule = () => {
+        console.log("Saving module:", moduleInfo);
+        // TODO: Add API POST request here
+    };
+
+    const handleNewQuestion = () => {
+        navigate(modulePath + "/question/new/edit", {state : { moduleInfo }})
     }
 
   return (
@@ -40,7 +56,7 @@ function InstructorModuleEditor() {
         {
             moduleInfo.questions.map((question) => {
                 return (
-                    <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full gap-4">
+                    <div key={question.id} className="flex flex-col p-6 bg-white shadow rounded-lg w-full gap-4">
                         <h1 className="text-2xl font-semibold">{question.title}</h1>
                         <div className="flex w-full items-end">
                             <span className="flex-1 ">
@@ -61,8 +77,8 @@ function InstructorModuleEditor() {
         
 
         <div className='flex flex-row w-full'>
-            <button className='mt-auto mr-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition'>Save Module State</button>
-            <button className='mt-auto ml-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition'>Add New Question</button>
+            <button className='mt-auto mr-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition' onClick={() => handleSaveModule()}>Save Module State</button>
+            <button className='mt-auto ml-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition' onClick={() => handleNewQuestion()}>Add New Question</button>
         </div>
     </div>
   )
