@@ -108,7 +108,7 @@ function InstructorModuleEditor() {
         </div>
         
 
-        <div className='flex flex-row w-full justify-between'>
+        <div className='flex flex-col md:flex-row w-full gap-4 justify-between'>
             <button className='mt-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition' onClick={() => handleSaveModule()}>Save Module State</button>
             <button className='mt-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition' onClick={() => handleDiscardChanges()}>Discard Changes</button>
             <button className='mt-auto bg-purple-600 text-white font-semibold py-2 px-4 rounded-lg hover:bg-purple-700 transition' onClick={() => handleNewQuestion()}>Add New Question</button>
