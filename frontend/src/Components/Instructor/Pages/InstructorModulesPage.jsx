@@ -37,7 +37,7 @@ const ModulesPage = () => {
           <div
           key={module.moduleId}
           className="bg-white shadow-md p-4 rounded-lg text-center cursor-pointer hover:bg-gray-200"
-          onClick={() => handleNavigateToModule(module.moduleId)}
+          onClick={() => handleNavigateToModule(module.moduleId, module.title, module.description)}
         >
           <h2 className="text-xl font-semibold text-gray-800">Module {module.moduleId}: {module.title}</h2>
           <p className="text-gray-600">{module.description}</p>
