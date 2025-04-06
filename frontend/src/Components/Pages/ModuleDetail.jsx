@@ -1,9 +1,8 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
 import axios from "axios";
-import { nudgingMessages } from "../../constants/NudgingMessages";  // Import nudging messages
+import { nudgingMessages } from "../../constants/NudgingMessages"; // Import nudging messages
 
-// Assuming backend endpoint is hosted on localhost:8080
 const BASE_URL = "http://localhost:8080";
 
 // Function to get a random nudging message based on the grade
@@ -19,7 +18,6 @@ const getNudgingMessage = (grade) => {
     messageCategory = nudgingMessages.noMedal;
   }
 
-  // Get a random message from the chosen category
   return messageCategory[Math.floor(Math.random() * messageCategory.length)];
 };
 
@@ -35,10 +33,9 @@ const getMedal = (grade) => {
   }
 };
 
-const ModuleOverview = ({ module, startModule }) => {
-  //Fetch for Module Info for overview page
+const ModuleOverview = ({ module, startModule, reviewModule, completionStatus, grade }) => {
   const location = useLocation();
-  const {title, description, id} = location.state || {}; //Extract state variables from Module Page info
+  const { title, description, id } = location.state || {}; // Extract state variables from Module Page info
 
   return (
     <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
@@ -53,9 +50,24 @@ const ModuleOverview = ({ module, startModule }) => {
           <div className="rounded-full bg-green-300 w-3 h-3"></div>
           {module.length} Questions
         </div>
-        <button className="bg-blue-500 text-white px-6 py-2 rounded" onClick={startModule}>
-          Begin Module
-        </button>
+        {completionStatus && grade !== null ? (
+          <>
+            <div className="mt-auto text-center text-2xl">
+              Your Grade: {grade}%
+            </div>
+            <button className="bg-blue-500 text-white px-6 py-2 rounded" onClick={reviewModule}>
+              Review Module
+            </button>
+          </>
+        ) : (
+          <button 
+            className={`bg-blue-500 text-white px-6 py-2 rounded ${completionStatus ? "cursor-not-allowed opacity-50" : ""}`} 
+            onClick={startModule}
+            disabled={completionStatus}
+          >
+            Begin Module
+          </button>
+        )}
       </div>
     </div>
   )
@@ -230,7 +242,7 @@ const QuestionPage = ({
 );
 
 const ModuleDetail = () => {
-  const { moduleId, userId } = useParams();
+  const { moduleId } = useParams(); // useParams now only contains moduleId
   const [module, setModule] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showImage, setShowImage] = useState(false);
@@ -241,42 +253,45 @@ const ModuleDetail = () => {
   const [completionStatus, setCompletionStatus] = useState(false);
   const [userEmail, setUserEmail] = useState(null); // State to store user email
   const [userDetails, setUserDetails] = useState({ userId: null, email: null }); // State to store user ID and email
+  const [userGrade, setUserGrade] = useState(null);
   
-  //Fetch Requests
-  {
-  // Fetch user email
+  // Fetch Requests
   useEffect(() => {
-    axios
-      .get(`${BASE_URL}/get-user-info`, { withCredentials: true })
+    axios.get(`${BASE_URL}/get-user-info`, { withCredentials: true })
       .then(response => setUserEmail(response.data.email))
       .catch(error => console.error("Error fetching user info!", error));
   }, []);
-  
-  // Fetch user ID using email
+
   useEffect(() => {
     if (userEmail) {
       const encodedEmail = encodeURIComponent(userEmail);
-      axios
-        .get(`${BASE_URL}/${encodedEmail}/id`, { withCredentials: true })
+      axios.get(`${BASE_URL}/${encodedEmail}/id`, { withCredentials: true })
         .then(response => setUserDetails({ userId: response.data, email: userEmail }))
         .catch(error => console.error("Error fetching user ID!", error));
     }
   }, [userEmail]);
 
   useEffect(() => {
-    axios
-      .get(`${BASE_URL}/questions/module/${moduleId}`, { withCredentials: true })
+    axios.get(`${BASE_URL}/questions/module/${moduleId}`, { withCredentials: true })
       .then(response => setModule(response.data))
       .catch(error => console.error("Error fetching module details!", error));
+  }, [moduleId]);
 
-    //Placeholder for a fetch request to check if a user has taken this module yet.
-    if (userDetails.userId) {
-    
+  useEffect(() => {
+    if (userDetails.userId && moduleId) {
+      axios.get(`${BASE_URL}/answers/percentage/${userDetails.userId}/${moduleId}`, { withCredentials: true })
+        .then(response => {
+          if (response.data) {
+            setUserGrade(response.data.percentage);
+            setCompletionStatus(true);
+          }
+        })
+        .catch(error => console.error("Error fetching user's grade:", error));
     }
-  }, [moduleId, userDetails.userId]);
+  }, [userDetails.userId, moduleId]);
+
 
   if (!module) return <div>Loading...</div>;
-  }
 
   const handleStartModule = () => {
     if (!completionStatus) {
@@ -287,6 +302,7 @@ const ModuleDetail = () => {
   };
 
   const handleReviewModule = () => {
+    setSubmissionResults(null);
     setReviewAnswers(true);
   };
 
@@ -359,16 +375,15 @@ const ModuleDetail = () => {
     const answers = Object.keys(selectedAnswers).map((questionId) => ({
       questionId: parseInt(questionId),
       letter: selectedAnswers[questionId],
-      userId: userDetails.userId
+      userId: userDetails.userId,
     }));
 
-    axios
-      .post(`${BASE_URL}/answers/grade`, answers, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+    axios.post(`${BASE_URL}/answers/grade`, answers, {
+      withCredentials: true,
+      headers: {
+        'Content-Type': 'application/json'
+      }
+    })
       .then((response) => {
         setSubmissionResults(response.data); // Save the results to state
         setReviewAnswers(false);
@@ -394,7 +409,7 @@ const ModuleDetail = () => {
             startModule={handleStartModule}
             reviewModule={handleReviewModule}
             completionStatus={completionStatus}
-            userId={userId}
+            grade={userGrade}
           />
         )
       ) : reviewAnswers ? (

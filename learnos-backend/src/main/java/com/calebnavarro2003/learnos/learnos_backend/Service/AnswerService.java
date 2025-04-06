@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 
 import com.calebnavarro2003.learnos.learnos_backend.Model.Answer;
 import com.calebnavarro2003.learnos.learnos_backend.Model.Grade;
+import com.calebnavarro2003.learnos.learnos_backend.Model.GradeId;
 import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleStatistic;
 import com.calebnavarro2003.learnos.learnos_backend.Model.QuestionResult;
 import com.calebnavarro2003.learnos.learnos_backend.Repository.AnswerRepository;
@@ -51,11 +52,13 @@ public class AnswerService {
     
     private void saveModuleGrade(Integer moduleId, int userId) {
         BigDecimal stats = answerRepository.getUserGradeByModule(moduleId, userId);
-        Grade grade = new Grade(moduleId, stats, userId);
+        GradeId gradeId = new GradeId(userId, moduleId);
+        Grade grade = new Grade(gradeId, stats);
         gradeRepository.save(grade);
     }
 
     public Grade getUserGrade(int userId, int moduleId) {
-        return gradeRepository.findByIdAndModuleId(userId, moduleId);
+        GradeId gradeId = new GradeId(userId, moduleId);
+        return gradeRepository.findById(gradeId).orElse(null);
     }
 }
