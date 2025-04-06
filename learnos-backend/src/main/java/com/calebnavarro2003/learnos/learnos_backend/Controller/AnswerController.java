@@ -10,6 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.calebnavarro2003.learnos.learnos_backend.Model.Answer;
+import com.calebnavarro2003.learnos.learnos_backend.Model.Grade;
 import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleStatistic;
 import com.calebnavarro2003.learnos.learnos_backend.Model.QuestionResult;
 import com.calebnavarro2003.learnos.learnos_backend.Service.AnswerService;
@@ -34,6 +35,11 @@ public class AnswerController {
     @GetMapping("/statistics/{moduleId}")
     public List<ModuleStatistic> getMethodName(@PathVariable int moduleId) {
         return answerService.getModuleStatistics(moduleId);
+    }
+
+    @GetMapping("/percentage/{userId}/{moduleId}")
+    public Grade getUserGrade(@PathVariable int userId, @PathVariable int moduleId) {
+        return answerService.getUserGrade(userId, moduleId);
     }
     
 }
