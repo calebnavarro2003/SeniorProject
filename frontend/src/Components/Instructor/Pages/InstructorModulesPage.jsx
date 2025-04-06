@@ -4,6 +4,7 @@ import axios from "axios";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState([]);
+  const navigate = useNavigate();
 
   useEffect(() => {
     // Fetch the modules from the backend
@@ -17,14 +18,16 @@ const ModulesPage = () => {
       });
   }, []);
 
-  const navigate = useNavigate();
-
   const handleNavigateToModule = (moduleId, moduleTitle, moduleDescription) => {
-    navigate(`/module/${moduleId}`, { state: { title: moduleTitle, description: moduleDescription, id: moduleId } }); // Pass module details as state
+    navigate(`/admin/module/${moduleId}`, { state: { title: moduleTitle, description: moduleDescription } }); // Pass module details as state
   };
 
+  const handleNewModule = () => {
+    navigate('/admin/module/new', { state: { modules }})
+  }
+
   return (
-    <div className="flex flex-col items-center justify-start overflow-auto bg-gray-100 h-full">
+    <div className="flex flex-col items-center justify-start overflow-auto bg-gray-100 h-full gap-4">
       <h1 className="w-full text-center text-4xl font-bold text-gray-800 py-4">
         Available Modules
       </h1>
@@ -40,6 +43,7 @@ const ModulesPage = () => {
         </div>
         ))}
       </div>
+      <button className="ml-auto mt-auto rounded-lg text-white shadow p-3 m-4 bg-purple-600" onClick={() => handleNewModule()}>Create New Module</button>
     </div>
   );
 };
