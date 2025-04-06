@@ -31,10 +31,15 @@ public class UserController {
         return user.getEmail();
     }
 
-    @GetMapping("/{email}/id")
+    @GetMapping("/{email:.+}/id")
     public Long getUserId(@PathVariable String email) {
         User user = userService.getUserByEmail(email);
-        return user.getId();
+        if (user != null) {
+            return user.getId();
+        } else {
+            // Indicate user not found appropriately
+            return null;
+        }
     }
 
     @GetMapping("/authenticate")
