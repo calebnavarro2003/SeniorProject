@@ -34,6 +34,16 @@ export const fetchUserGrade = async (userId, moduleId) => {
   }
 };
 
+export const fetchAllModuleGrades = async (userId) => {
+    try {
+      const response = await axios.get(`${BASE_URL}/answers/grades/${userId}`, { withCredentials: true });
+      return response.data; // Assume it returns an array of { moduleId, percentage }
+    } catch (error) {
+      console.error("Error fetching all modules grades:", error);
+      throw error;
+    }
+  };
+
 export const fetchModuleAnswers = async (moduleId) => {
   try {
     const response = await axios.get(`${BASE_URL}/answers/${moduleId}`, { withCredentials: true });
