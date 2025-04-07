@@ -173,6 +173,7 @@ const ModuleDetail = () => {
             moduleId={moduleId}
             handleNavigateToQuestion={handleNavigateToQuestion}
             reviewingQuestions={reviewingQuestions}
+            userGrade={userGrade}
           />
         ) : (
           <ModuleOverview

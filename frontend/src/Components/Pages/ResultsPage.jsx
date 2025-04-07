@@ -1,8 +1,19 @@
-import React from "react";
+import React, {useState, useEffect} from "react";
 import { getNudgingMessage, getMedal } from "../../utils/helpers";
 
-const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion, reviewingQuestions }) => {
-  const grade = Math.round((results.filter((r) => r.correct).length / results.length) * 100);
+const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion, reviewingQuestions, userGrade }) => {
+
+  const[grade, setGrade] = useState(0);
+  
+  useEffect(() => {
+    if(results != null && !reviewingQuestions){
+      setGrade(Math.round((results.filter((r) => r.correct).length / results.length) * 100));
+    }
+    else{
+      setGrade(userGrade);
+    }
+  }, []);
+
   const message = getNudgingMessage(grade);
   const medalImagePath = getMedal(grade);
 
