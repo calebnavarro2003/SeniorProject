@@ -208,6 +208,7 @@ const ModuleDetail = () => {
       ) : reviewAnswers && !reviewingQuestions ? (
         <ReviewPage
           module={module}
+          moduleId={moduleId}
           selectedAnswers={selectedAnswers}
           unansweredCount={unansweredCount}
           handleNavigateToQuestion={handleNavigateToQuestion}
