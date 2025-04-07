@@ -93,7 +93,13 @@ const ModuleDetail = () => {
   const handleNext = () => {
     if (showImage) {
       setShowImage(false);
-      if (currentIndex < module.length - 1) setCurrentIndex(currentIndex + 1);
+      if (currentIndex < module.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else if (reviewingQuestions && currentIndex === module.length - 1) {
+        handleReviewModule();
+      } else if (currentIndex === module.length - 1) {
+        handleReviewAnswers();
+      }
     } else {
       setShowImage(true);
     }
@@ -101,7 +107,13 @@ const ModuleDetail = () => {
 
   const handleNextQuestion = () => {
     setShowImage(false);
-    if (currentIndex < module.length - 1) setCurrentIndex(currentIndex + 1);
+    if (currentIndex < module.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else if (reviewingQuestions && currentIndex === module.length - 1) {
+      handleReviewModule();
+    } else if (currentIndex === module.length - 1) {
+      handleReviewAnswers();
+    }
   };
 
   const handlePreviousQuestion = () => {
@@ -136,6 +148,7 @@ const ModuleDetail = () => {
     setReviewAnswers(false);
     setCurrentIndex(index);
     setShowImage(true);
+    setHasStarted(true);
   };
 
   const currentQuestion = module[currentIndex];
@@ -165,6 +178,7 @@ const ModuleDetail = () => {
       setReviewAnswers(false);
       setHasStarted(false);
       setCompletionStatus(true);
+      setReviewingQuestions(true);
     } catch (error) {
       console.error("Error submitting answers:", error);
     }
@@ -191,7 +205,7 @@ const ModuleDetail = () => {
             grade={userGrade}
           />
         )
-      ) : reviewAnswers ? (
+      ) : reviewAnswers && !reviewingQuestions ? (
         <ReviewPage
           module={module}
           selectedAnswers={selectedAnswers}
@@ -207,6 +221,8 @@ const ModuleDetail = () => {
               currentQuestion={currentQuestion}
               handlePrevious={handlePreviousQuestion}
               handleNext={handleNext}
+              reviewingQuestions={reviewingQuestions}
+              handleReviewModule={handleReviewModule}
             />
           ) : (
             <QuestionPage
@@ -215,8 +231,10 @@ const ModuleDetail = () => {
               selectedAnswers={selectedAnswers}
               handleAnswerSelect={handleAnswerSelect}
               handlePrevious={handlePreviousQuestion}
-              handleNext={currentIndex === module.length - 1 ? handleReviewAnswers : handleNextQuestion}
+              handleNext={handleNextQuestion}
               correctAnswer={correctAnswer && correctAnswer[currentQuestion.question_id]}
+              reviewingQuestions={reviewingQuestions}
+              handleReviewModule={handleReviewModule}
             />
           )}
         </>
