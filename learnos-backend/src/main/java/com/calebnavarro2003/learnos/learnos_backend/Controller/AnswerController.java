@@ -42,4 +42,9 @@ public class AnswerController {
         return answerService.getUserGrade(userId, moduleId);
     }
     
+    @GetMapping("/{moduleId}")
+    public List<Answer> getAnswersByModuleId(@PathVariable Integer moduleId) {
+        return answerService.getAnswersByModuleId(moduleId);
+    }
+
 }

@@ -116,14 +116,7 @@ const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion }) => {
   );
 };
 
-const ReviewPage = ({
-  module,
-  selectedAnswers,
-  unansweredCount,
-  handleNavigateToQuestion,
-  handlePreviousQuestion,
-  handleSubmitAnswers,
-}) => (
+const ReviewPage = ({ module, selectedAnswers, unansweredCount, handleNavigateToQuestion, handlePreviousQuestion, handleSubmitAnswers }) => (
   <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full">
     <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">
@@ -189,14 +182,7 @@ const ContentPage = ({ currentQuestion, handlePrevious, handleNext }) => (
   </div>
 );
 
-const QuestionPage = ({
-  currentQuestion,
-  base64Image,
-  selectedAnswers,
-  handleAnswerSelect,
-  handlePrevious,
-  handleNext
-}) => (
+const QuestionPage = ({ currentQuestion, base64Image, selectedAnswers, handleAnswerSelect, handlePrevious, handleNext }) => (
   <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full">
     <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
       <div className="flex-grow mb-4 flex justify-center items-center">
@@ -254,6 +240,7 @@ const ModuleDetail = () => {
   const [userEmail, setUserEmail] = useState(null); // State to store user email
   const [userDetails, setUserDetails] = useState({ userId: null, email: null }); // State to store user ID and email
   const [userGrade, setUserGrade] = useState(null);
+  const [moduleAnswers, setModuleAnswers] = useState(null);
   
   // Fetch Requests
   useEffect(() => {
@@ -262,6 +249,7 @@ const ModuleDetail = () => {
       .catch(error => console.error("Error fetching user info!", error));
   }, []);
 
+  // Get the user's id for later fetches
   useEffect(() => {
     if (userEmail) {
       const encodedEmail = encodeURIComponent(userEmail);
@@ -271,12 +259,14 @@ const ModuleDetail = () => {
     }
   }, [userEmail]);
 
+  // Get the Module Details
   useEffect(() => {
     axios.get(`${BASE_URL}/questions/module/${moduleId}`, { withCredentials: true })
       .then(response => setModule(response.data))
       .catch(error => console.error("Error fetching module details!", error));
   }, [moduleId]);
 
+  // Get user's grade if they have already finished the module
   useEffect(() => {
     if (userDetails.userId && moduleId) {
       axios.get(`${BASE_URL}/answers/percentage/${userDetails.userId}/${moduleId}`, { withCredentials: true })
@@ -290,6 +280,24 @@ const ModuleDetail = () => {
     }
   }, [userDetails.userId, moduleId]);
 
+  // Get answers if the user has completed the module already for review
+  useEffect(() => {
+    const fetchData = async () => {
+      if (completionStatus && userDetails.userId && moduleId) {
+        try {
+          const response = await axios.get(`${BASE_URL}/answers/${moduleId}`, { withCredentials: true });
+          if (response.data) {
+            const relevantData = response.data.map(({ questionId, letter }) => ({ questionId, letter }));
+            setModuleAnswers(relevantData);
+          }
+        } catch (error) {
+          console.error("Error fetching answers for a given module", error);
+        }
+      }
+    };
+
+    fetchData();
+  }, [completionStatus, userDetails.userId, moduleId]);
 
   if (!module) return <div>Loading...</div>;
 
@@ -302,8 +310,9 @@ const ModuleDetail = () => {
   };
 
   const handleReviewModule = () => {
-    setSubmissionResults(null);
+    setSubmissionResults(moduleAnswers); // Load pre-existing answers
     setReviewAnswers(true);
+    setHasStarted(false);
   };
 
   const handleNext = () => {

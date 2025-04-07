@@ -61,4 +61,8 @@ public class AnswerService {
         GradeId gradeId = new GradeId(userId, moduleId);
         return gradeRepository.findById(gradeId).orElse(null);
     }
+
+    public List<Answer> getAnswersByModuleId(Integer moduleId) {
+        return answerRepository.findAnswersByModuleId(moduleId);
+    }
 }
