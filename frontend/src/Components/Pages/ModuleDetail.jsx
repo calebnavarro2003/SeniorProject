@@ -21,22 +21,26 @@ const ModuleDetail = () => {
   const [moduleAnswers, setModuleAnswers] = useState(null);
   const [userDetails, setUserDetails] = useState({ userId: null, email: null });
   const [correctAnswer, setCorrectAnswer] = useState(null);
+  const [reviewingQuestions, setReviewingQuestions] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Fetch Requests
   useEffect(() => {
+    setLoading(true);
     (async () => {
       try {
         const userInfo = await fetchUserInfo();
         const userEmail = userInfo.email;
-        const userId = userInfo.userId;
+        const userId = userInfo.id;
         const moduleData = await fetchModuleDetails(moduleId);
         setModule(moduleData);
-        setUserDetails({ userId, email: userEmail });
+        setUserDetails({ userId: userId, email: userEmail });
 
         const userGrade = await fetchUserGrade(userId, moduleId);
         if (typeof userGrade === "number") {
           setUserGrade(userGrade);
           setCompletionStatus(true);
+          setReviewingQuestions(true);
         } else {
           setCompletionStatus(false);
         }
@@ -44,12 +48,13 @@ const ModuleDetail = () => {
         console.error("Error fetching initial data:", error);
         setCompletionStatus(false);
       }
+      setLoading(false);
     })();
   }, [moduleId]);
 
   useEffect(() => {
-    (async () => {
-      if (completionStatus && userDetails.userId) {
+    if (completionStatus && userDetails.userId) {
+      (async () => {
         try {
           const answers = await fetchModuleAnswers(moduleId);
           setModuleAnswers(answers);
@@ -63,9 +68,11 @@ const ModuleDetail = () => {
         } catch (error) {
           console.error("Error fetching module answers:", error);
         }
-      }
-    })();
+      })();
+    }
   }, [completionStatus, userDetails.userId, moduleId]);
+
+  if (loading) return <div>Loading...</div>;
 
   if (!module) return <div>Loading...</div>;
 
@@ -86,7 +93,13 @@ const ModuleDetail = () => {
   const handleNext = () => {
     if (showImage) {
       setShowImage(false);
-      if (currentIndex < module.length - 1) setCurrentIndex(currentIndex + 1);
+      if (currentIndex < module.length - 1) {
+        setCurrentIndex(currentIndex + 1);
+      } else if (reviewingQuestions && currentIndex === module.length - 1) {
+        handleReviewModule();
+      } else if (currentIndex === module.length - 1) {
+        handleReviewAnswers();
+      }
     } else {
       setShowImage(true);
     }
@@ -94,7 +107,13 @@ const ModuleDetail = () => {
 
   const handleNextQuestion = () => {
     setShowImage(false);
-    if (currentIndex < module.length - 1) setCurrentIndex(currentIndex + 1);
+    if (currentIndex < module.length - 1) {
+      setCurrentIndex(currentIndex + 1);
+    } else if (reviewingQuestions && currentIndex === module.length - 1) {
+      handleReviewModule();
+    } else if (currentIndex === module.length - 1) {
+      handleReviewAnswers();
+    }
   };
 
   const handlePreviousQuestion = () => {
@@ -125,10 +144,11 @@ const ModuleDetail = () => {
 
   // New method for navigation to specific question
   const handleNavigateToQuestion = (index) => {
-    setSubmissionResults(null);  // Clear submission results to ensure accurate navigation
+    setSubmissionResults(null);
     setReviewAnswers(false);
     setCurrentIndex(index);
     setShowImage(true);
+    setHasStarted(true);
   };
 
   const currentQuestion = module[currentIndex];
@@ -158,6 +178,7 @@ const ModuleDetail = () => {
       setReviewAnswers(false);
       setHasStarted(false);
       setCompletionStatus(true);
+      setReviewingQuestions(true);
     } catch (error) {
       console.error("Error submitting answers:", error);
     }
@@ -169,8 +190,11 @@ const ModuleDetail = () => {
         submissionResults ? (
           <ReviewResultsPage
             results={submissionResults}
+            userId={userDetails.userId}
             moduleId={moduleId}
             handleNavigateToQuestion={handleNavigateToQuestion}
+            reviewingQuestions={reviewingQuestions}
+            userGrade={userGrade}
           />
         ) : (
           <ModuleOverview
@@ -181,9 +205,10 @@ const ModuleDetail = () => {
             grade={userGrade}
           />
         )
-      ) : reviewAnswers ? (
+      ) : reviewAnswers && !reviewingQuestions ? (
         <ReviewPage
           module={module}
+          moduleId={moduleId}
           selectedAnswers={selectedAnswers}
           unansweredCount={unansweredCount}
           handleNavigateToQuestion={handleNavigateToQuestion}
@@ -197,6 +222,8 @@ const ModuleDetail = () => {
               currentQuestion={currentQuestion}
               handlePrevious={handlePreviousQuestion}
               handleNext={handleNext}
+              reviewingQuestions={reviewingQuestions}
+              handleReviewModule={handleReviewModule}
             />
           ) : (
             <QuestionPage
@@ -205,8 +232,10 @@ const ModuleDetail = () => {
               selectedAnswers={selectedAnswers}
               handleAnswerSelect={handleAnswerSelect}
               handlePrevious={handlePreviousQuestion}
-              handleNext={currentIndex === module.length - 1 ? handleReviewAnswers : handleNextQuestion}
+              handleNext={handleNextQuestion}
               correctAnswer={correctAnswer && correctAnswer[currentQuestion.question_id]}
+              reviewingQuestions={reviewingQuestions}
+              handleReviewModule={handleReviewModule}
             />
           )}
         </>

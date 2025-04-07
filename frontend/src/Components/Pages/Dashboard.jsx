@@ -39,7 +39,7 @@ export default function Dashboard() {
       try {
         const userInfo = await fetchUserInfo();
         const userEmail = userInfo.email;
-        const userId = userInfo.userId;
+        const userId = userInfo.id;
         const grades = await fetchAllModuleGrades(userId);
         const medalCounts = calculateMedals(grades);
         setMedals(medalCounts);

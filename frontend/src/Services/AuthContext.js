@@ -14,7 +14,6 @@ export const AuthProvider = ({ children }) => {
             const response = await axios.get('http://localhost:8080/auth/validate', { withCredentials: true });
             setIsAuthenticated(response.data.authenticated);
             setIsAdmin(response.data.isAdmin || false);
-            console.log(isAdmin)
         } catch (error) {
             setIsAuthenticated(false);
             setIsAdmin(false);

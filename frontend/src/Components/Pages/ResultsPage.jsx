@@ -1,16 +1,56 @@
-import React from "react";
+import React, { useState, useEffect } from "react";
 import { getNudgingMessage, getMedal } from "../../utils/helpers";
+import { fetchUserResponsesForModule } from "../../Services/UserService";
 
-const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion }) => {
-  const grade = Math.round((results.filter((r) => r.correct).length / results.length) * 100);
+const ReviewResultsPage = ({ results, userId, moduleId, handleNavigateToQuestion, reviewingQuestions, userGrade }) => {
+  const [grade, setGrade] = useState(0);
+  const [submissionResults, setSubmissionResults] = useState(results);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    if (results != null && !reviewingQuestions) {
+      setGrade(Math.round((results.filter((r) => r.correct).length / results.length) * 100));
+      setSubmissionResults(results);
+      setLoading(false);
+    } else {
+      setGrade(userGrade);
+    }
+  }, [results, reviewingQuestions, userGrade]);
+
+  // Get responses if the user is in review mode
+  useEffect(() => {
+    if (reviewingQuestions) {
+      setLoading(true);
+      fetchUserResponsesForModule(userId, moduleId)
+        .then(responses => {
+          setSubmissionResults(responses);
+          setLoading(false);
+        })
+        .catch(error => {
+          console.error('Error retrieving user responses:', error);
+          setLoading(false);
+        });
+    }
+  }, [reviewingQuestions, userId, moduleId]);
+
   const message = getNudgingMessage(grade);
   const medalImagePath = getMedal(grade);
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+        <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
+          <h2 className="text-3xl font-bold text-gray-800 mb-6">Loading...</h2>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
       <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Module {moduleId} Results</h2>
-        {results.map((result, index) => (
+        {submissionResults.map((result, index) => (
           <div key={result.questionId} className="flex items-center justify-between mb-4">
             <p className="text-lg text-gray-700">
               Question {index + 1}
