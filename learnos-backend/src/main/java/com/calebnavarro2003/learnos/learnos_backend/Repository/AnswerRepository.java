@@ -40,4 +40,12 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
         WHERE q.module_id = :moduleId AND r.user_id = :userId
         """, nativeQuery = true)
     BigDecimal getUserGradeByModule(@Param("moduleId") Integer moduleId, @Param("userId") Integer userId);
+
+    @Query(value = """
+        SELECT a.*
+        FROM answers a
+        INNER JOIN questions q ON a.question_id = q.question_id
+        WHERE q.module_id = :moduleId
+        """, nativeQuery = true)
+    List<Answer> findAnswersByModuleId(@Param("moduleId") Integer moduleId);
 }
