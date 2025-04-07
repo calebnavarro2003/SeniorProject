@@ -22,9 +22,11 @@ const ModuleDetail = () => {
   const [userDetails, setUserDetails] = useState({ userId: null, email: null });
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [reviewingQuestions, setReviewingQuestions] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   // Fetch Requests
   useEffect(() => {
+    setLoading(true);
     (async () => {
       try {
         const userInfo = await fetchUserInfo();
@@ -46,12 +48,13 @@ const ModuleDetail = () => {
         console.error("Error fetching initial data:", error);
         setCompletionStatus(false);
       }
+      setLoading(false);
     })();
   }, [moduleId]);
 
   useEffect(() => {
-    (async () => {
-      if (completionStatus && userDetails.userId) {
+    if (completionStatus && userDetails.userId) {
+      (async () => {
         try {
           const answers = await fetchModuleAnswers(moduleId);
           setModuleAnswers(answers);
@@ -65,9 +68,11 @@ const ModuleDetail = () => {
         } catch (error) {
           console.error("Error fetching module answers:", error);
         }
-      }
-    })();
+      })();
+    }
   }, [completionStatus, userDetails.userId, moduleId]);
+
+  if (loading) return <div>Loading...</div>;
 
   if (!module) return <div>Loading...</div>;
 
