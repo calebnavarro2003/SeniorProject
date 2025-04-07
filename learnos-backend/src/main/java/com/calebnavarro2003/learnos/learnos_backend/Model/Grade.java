@@ -1,40 +1,34 @@
 package com.calebnavarro2003.learnos.learnos_backend.Model;
 
 import java.math.BigDecimal;
-
 import jakarta.persistence.Column;
+import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name = "grades")
 public class Grade {
-    @Id
-    @Column(name = "user_id")
-    private Integer id;
-    private Integer moduleId;
+    @EmbeddedId
+    private GradeId id;
+
+    @Column(name = "percentage")
     private BigDecimal percentage;
 
     public Grade() {}
 
-    public Grade(Integer moduleId, BigDecimal percentage, int userId) {
-        this.moduleId = moduleId;
+    public Grade(GradeId id, BigDecimal percentage) {
+        this.id = id;
         this.percentage = percentage;
-        this.id = userId;
     }
 
     // Getters and setters
-    public Integer getId() {
+    public GradeId getId() {
         return id;
     }
 
-    public Integer getModuleId() {
-        return moduleId;
-    }
-
-    public void setModuleId(Integer moduleId) {
-        this.moduleId = moduleId;
+    public void setId(GradeId id) {
+        this.id = id;
     }
 
     public BigDecimal getPercentage() {

@@ -41,5 +41,15 @@ public class AnswerController {
     public Grade getUserGrade(@PathVariable int userId, @PathVariable int moduleId) {
         return answerService.getUserGrade(userId, moduleId);
     }
+
+    @GetMapping("/grades/{userId}")
+    public List<Grade> getUserGrades(@PathVariable int userId) {
+        return answerService.getUserGrades(userId);
+    }
     
+    @GetMapping("/{moduleId}")
+    public List<Answer> getAnswersByModuleId(@PathVariable Integer moduleId) {
+        return answerService.getAnswersByModuleId(moduleId);
+    }
+
 }
