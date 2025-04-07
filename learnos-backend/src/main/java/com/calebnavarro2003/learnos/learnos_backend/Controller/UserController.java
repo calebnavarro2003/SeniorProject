@@ -22,7 +22,6 @@ public class UserController {
     @GetMapping("/get-user-info")
     public Map<String, Object> user(Authentication authentication) {
         User principal = (User) authentication.getPrincipal();
-        System.out.println(principal.getProfilePicture());
         Map<String, Object> userAttributes = new HashMap<>();
         userAttributes.put("name", principal.getName());
         userAttributes.put("picture", principal.getProfilePicture());
