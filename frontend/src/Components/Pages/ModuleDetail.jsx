@@ -21,6 +21,7 @@ const ModuleDetail = () => {
   const [moduleAnswers, setModuleAnswers] = useState(null);
   const [userDetails, setUserDetails] = useState({ userId: null, email: null });
   const [correctAnswer, setCorrectAnswer] = useState(null);
+  const [reviewingQuestions, setReviewingQuestions] = useState(false);
 
   // Fetch Requests
   useEffect(() => {
@@ -36,6 +37,7 @@ const ModuleDetail = () => {
         if (typeof userGrade === "number") {
           setUserGrade(userGrade);
           setCompletionStatus(true);
+          setReviewingQuestions(true);
         } else {
           setCompletionStatus(false);
         }
@@ -124,7 +126,7 @@ const ModuleDetail = () => {
 
   // New method for navigation to specific question
   const handleNavigateToQuestion = (index) => {
-    setSubmissionResults(null);  // Clear submission results to ensure accurate navigation
+    setSubmissionResults(null);
     setReviewAnswers(false);
     setCurrentIndex(index);
     setShowImage(true);
@@ -170,6 +172,7 @@ const ModuleDetail = () => {
             results={submissionResults}
             moduleId={moduleId}
             handleNavigateToQuestion={handleNavigateToQuestion}
+            reviewingQuestions={reviewingQuestions}
           />
         ) : (
           <ModuleOverview

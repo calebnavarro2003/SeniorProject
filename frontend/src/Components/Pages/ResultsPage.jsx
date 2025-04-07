@@ -1,7 +1,7 @@
 import React from "react";
 import { getNudgingMessage, getMedal } from "../../utils/helpers";
 
-const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion }) => {
+const ReviewResultsPage = ({ results, moduleId, handleNavigateToQuestion, reviewingQuestions }) => {
   const grade = Math.round((results.filter((r) => r.correct).length / results.length) * 100);
   const message = getNudgingMessage(grade);
   const medalImagePath = getMedal(grade);
