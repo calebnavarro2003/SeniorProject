@@ -3,6 +3,7 @@ package com.calebnavarro2003.learnos.learnos_backend.Controller;
 import com.calebnavarro2003.learnos.learnos_backend.Service.UserService;
 import com.calebnavarro2003.learnos.learnos_backend.Model.User;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.core.annotation.AuthenticationPrincipal;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +12,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import java.util.HashMap;
 import java.util.Map;
 
 
@@ -18,8 +20,15 @@ import java.util.Map;
 public class UserController {
 
     @GetMapping("/get-user-info")
-    public Map<String, Object> user(@AuthenticationPrincipal OAuth2User principal) {
-        return principal.getAttributes();
+    public Map<String, Object> user(Authentication authentication) {
+        User principal = (User) authentication.getPrincipal();
+        System.out.println(principal.getProfilePicture());
+        Map<String, Object> userAttributes = new HashMap<>();
+        userAttributes.put("name", principal.getName());
+        userAttributes.put("picture", principal.getProfilePicture());
+        userAttributes.put("email", principal.getEmail());
+        userAttributes.put("id", principal.getId());
+        return userAttributes;
     }
 
     @Autowired

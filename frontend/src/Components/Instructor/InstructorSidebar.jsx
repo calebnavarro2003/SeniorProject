@@ -1,7 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
-
+import UserService from '../../Services/UserService';
 function Sidebar() {
     const [user, setUser] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
@@ -9,14 +8,17 @@ function Sidebar() {
     const location = useLocation();
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-user-info', { withCredentials: true })
-            .then(response => {
-                setUser(response.data);
-            })
-            .catch(error => {
-                console.error("Error fetching user info: ", error);
-            });
-    }, []);
+        fetchUser()
+    }, [navigate]);
+
+    const fetchUser = async () => {
+        try {
+            const response = await UserService.getUserInfo()
+            setUser(response)
+        } catch (error) {
+        console.error("Error fetching user: " + error)
+        }
+    }
 
     const handleNavigate = (path) => {
         navigate(path);

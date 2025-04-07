@@ -1,22 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import axios from 'axios';
+import UserService from "../Services/UserService";
 
 function Sidebar() {
     const [user, setUser] = useState(null);
     const [isMenuOpen, setIsMenuOpen] = useState(false);
-    const navigate = useNavigate();
     const location = useLocation();
+    const navigate = useNavigate();
 
     useEffect(() => {
-        axios.get('http://localhost:8080/get-user-info', { withCredentials: true })
-            .then(response => {
-                setUser(response.data);
-            })
-            .catch(error => {
-                console.error("Error fetching user info: ", error);
-            });
-    }, []);
+        fetchUser()
+    }, [navigate]);
+
+    const fetchUser = async () => {
+        try {
+            const response = await UserService.getUserInfo()
+            setUser(response)
+        } catch (error) {
+        console.error("Error fetching user: " + error)
+        }
+    }
 
     const handleNavigate = (path) => {
         navigate(path);
@@ -33,7 +36,7 @@ function Sidebar() {
             <div className="hidden md:flex md:flex-col bg-purple-600 text-white p-8 min-h-screen">
                 <div className="flex flex-row pt-4 gap-8">
                     <h2 className="text-3xl font-bold text-wrap">
-                        Welcome, <br /> {user ? user.given_name : "User"}
+                        Welcome, <br /> {user ? user.name.substring(0, user.name.indexOf(' ')) : "User"}
                     </h2>
                     <div className="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
                         {user ? (

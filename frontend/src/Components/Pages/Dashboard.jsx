@@ -46,7 +46,7 @@ export default function Dashboard() {
     <div className="flex flex-col px-4 py-4 gap-4 w-full h-full flex-1 bg-gray-100">
       {/* Banner that appears each time a user navigates to the dashboard */}
       {showBanner && (
-        <div className="mb-4 w-full bg-purple-600 text-white p-4 rounded-lg shadow-md flex justify-between items-center">
+        <div className=" w-full bg-purple-600 text-white p-4 rounded-lg shadow-md flex justify-between items-center">
           <span>{bannerMessage}</span>
           <button onClick={handleBannerClose} className="text-white font-bold">
             X

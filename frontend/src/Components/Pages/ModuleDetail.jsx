@@ -1,10 +1,9 @@
 import React, { useEffect, useState } from "react";
 import { useParams, useLocation } from "react-router-dom";
-import axios from "axios";
+import UserService from "../../Services/UserService";
 import { nudgingMessages } from "../../constants/NudgingMessages";  // Import nudging messages
 
 // Assuming backend endpoint is hosted on localhost:8080
-const BASE_URL = "http://localhost:8080";
 
 // Function to get a random nudging message based on the grade
 const getNudgingMessage = (grade) => {
@@ -244,30 +243,34 @@ const ModuleDetail = () => {
   
   //Fetch Requests
   {
-  // Fetch user email
-  useEffect(() => {
-    axios
-      .get(`${BASE_URL}/get-user-info`, { withCredentials: true })
-      .then(response => setUserEmail(response.data.email))
-      .catch(error => console.error("Error fetching user info!", error));
-  }, []);
-  
-  // Fetch user ID using email
-  useEffect(() => {
-    if (userEmail) {
-      const encodedEmail = encodeURIComponent(userEmail);
-      axios
-        .get(`${BASE_URL}/${encodedEmail}/id`, { withCredentials: true })
-        .then(response => setUserDetails({ userId: response.data, email: userEmail }))
-        .catch(error => console.error("Error fetching user ID!", error));
+  // Fetch user email and id
+  const fetchUser = async () => {
+    try {
+        const response = await UserService.getUserInfo()
+        setUserEmail(response.email)
+        setUserDetails({ userId: response.id, email: response.email})
+    } catch (error) {
+    console.error("Error fetching user: " + error)
     }
-  }, [userEmail]);
+  }
 
   useEffect(() => {
-    axios
-      .get(`${BASE_URL}/questions/module/${moduleId}`, { withCredentials: true })
-      .then(response => setModule(response.data))
-      .catch(error => console.error("Error fetching module details!", error));
+    fetchUser()
+  }, []);
+
+  // Fetch module information
+  const fetchModule =  async (moduleId) => {
+    try {
+      const response = await UserService.getModuleDetails(moduleId)
+      setModule(response)
+      console.log(response)
+    } catch (error) {
+      console.error("Error fetching module details: " + error)
+    }
+  }
+
+  useEffect(() => {
+    fetchModule(moduleId)
 
     //Placeholder for a fetch request to check if a user has taken this module yet.
     if (userDetails.userId) {
@@ -362,13 +365,7 @@ const ModuleDetail = () => {
       userId: userDetails.userId
     }));
 
-    axios
-      .post(`${BASE_URL}/answers/grade`, answers, {
-        withCredentials: true,
-        headers: {
-          'Content-Type': 'application/json'
-        }
-      })
+    UserService.submitAnswers(answers)
       .then((response) => {
         setSubmissionResults(response.data); // Save the results to state
         setReviewAnswers(false);
