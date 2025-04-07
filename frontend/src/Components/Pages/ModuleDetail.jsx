@@ -171,6 +171,7 @@ const ModuleDetail = () => {
         submissionResults ? (
           <ReviewResultsPage
             results={submissionResults}
+            userId={userDetails.userId}
             moduleId={moduleId}
             handleNavigateToQuestion={handleNavigateToQuestion}
             reviewingQuestions={reviewingQuestions}

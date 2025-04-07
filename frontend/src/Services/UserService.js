@@ -66,7 +66,7 @@ export const fetchModuleDetails = async (moduleId) => {
 
 export const submitAnswers = async (answers) => {
   try {
-    const response = await axios.post(`${BASE_URL}/answers/grade`, answers, { withCredentials: true, headers: { 'Content-Type': 'application/json' } });
+    const response = await axios.post(`${BASE_URL}/answers/grade`, answers, { withCredentials: true });
     return response.data;
   } catch (error) {
     console.error("Error submitting answers:", error);
@@ -74,3 +74,14 @@ export const submitAnswers = async (answers) => {
   }
 };
 
+export const fetchUserResponsesForModule = async (userId, moduleId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/question-results/user/${userId}/module/${moduleId}`, {
+        withCredentials: true
+    });
+    return response.data;  // Assuming it returns an array of Response objects with all their fields.
+  } catch (error) {
+    console.error("Error fetching user responses for a given module:", error);
+    throw error;
+  }
+};
