@@ -1,24 +1,19 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import UserService from "../../../Services/UserService";
+import { fetchAllModules } from "../../../Services/UserService";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the modules from the backend
-    fetchModules()
+    const fetchModulesData = async () => {
+      const response = await fetchAllModules();
+      setModules(response);
+    };
+  
+    fetchModulesData();
   }, []);
-
-  const fetchModules = async () => {
-    try {
-      const response = await UserService.getAllModules()
-      setModules(response)
-    } catch (error) {
-      console.error("Error fetching modules: " + error)
-    }
-  }
 
   const handleNavigateToModule = (moduleId, moduleTitle, moduleDescription) => {
     navigate(`/admin/module/${moduleId}`, { state: { title: moduleTitle, description: moduleDescription } }); // Pass module details as state

@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useLocation } from 'react-router-dom';
-import UserService from "../Services/UserService";
+import { fetchUserInfo } from "../Services/UserService";
 
 function Sidebar() {
     const [user, setUser] = useState(null);
@@ -9,17 +9,13 @@ function Sidebar() {
     const navigate = useNavigate();
 
     useEffect(() => {
-        fetchUser()
-    }, [navigate]);
-
-    const fetchUser = async () => {
-        try {
-            const response = await UserService.getUserInfo()
-            setUser(response)
-        } catch (error) {
-        console.error("Error fetching user: " + error)
-        }
-    }
+        const getUserInfo = async () => {
+          const response = await fetchUserInfo();
+          setUser(response);
+        };
+      
+        getUserInfo();
+      }, [navigate]);
 
     const handleNavigate = (path) => {
         navigate(path);

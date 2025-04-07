@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { messages } from '../../constants/WelcomeMessages';
-import { fetchUserEmail, fetchUserId, fetchAllModuleGrades } from '../../services/userService';
+import { fetchUserInfo, fetchAllModuleGrades } from '../../Services/UserService';
 
 const getRandomMessage = (messageArray) => {
   const randomIndex = Math.floor(Math.random() * messageArray.length);
@@ -37,8 +37,9 @@ export default function Dashboard() {
   useEffect(() => {
     const initialize = async () => {
       try {
-        const userEmail = await fetchUserEmail();
-        const userId = await fetchUserId(userEmail);
+        const userInfo = await fetchUserInfo();
+        const userEmail = userInfo.email;
+        const userId = userInfo.userId;
         const grades = await fetchAllModuleGrades(userId);
         const medalCounts = calculateMedals(grades);
         setMedals(medalCounts);
