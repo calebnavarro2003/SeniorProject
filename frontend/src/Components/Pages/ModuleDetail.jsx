@@ -29,10 +29,10 @@ const ModuleDetail = () => {
       try {
         const userInfo = await fetchUserInfo();
         const userEmail = userInfo.email;
-        const userId = userInfo.userId;
+        const userId = userInfo.id;
         const moduleData = await fetchModuleDetails(moduleId);
         setModule(moduleData);
-        setUserDetails({ userId, email: userEmail });
+        setUserDetails({ userId: userId, email: userEmail });
 
         const userGrade = await fetchUserGrade(userId, moduleId);
         if (typeof userGrade === "number") {
