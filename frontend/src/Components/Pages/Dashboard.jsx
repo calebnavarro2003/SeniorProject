@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { messages } from '../../constants/WelcomeMessages';
-import { fetchUserEmail, fetchUserId, fetchAllModuleGrades } from '../../services/userService';
+import { fetchUserInfo, fetchAllModuleGrades } from '../../Services/UserService';
 
 const getRandomMessage = (messageArray) => {
   const randomIndex = Math.floor(Math.random() * messageArray.length);
@@ -37,8 +37,9 @@ export default function Dashboard() {
   useEffect(() => {
     const initialize = async () => {
       try {
-        const userEmail = await fetchUserEmail();
-        const userId = await fetchUserId(userEmail);
+        const userInfo = await fetchUserInfo();
+        const userEmail = userInfo.email;
+        const userId = userInfo.userId;
         const grades = await fetchAllModuleGrades(userId);
         const medalCounts = calculateMedals(grades);
         setMedals(medalCounts);
@@ -62,7 +63,7 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col px-4 py-4 gap-4 w-full h-full flex-1 bg-gray-100">
       {showBanner && (
-        <div className="mb-4 w-full bg-purple-600 text-white p-4 rounded-lg shadow-md flex justify-between items-center">
+        <div className=" w-full bg-purple-600 text-white p-4 rounded-lg shadow-md flex justify-between items-center">
           <span>{bannerMessage}</span>
           <button onClick={handleBannerClose} className="text-white font-bold">
             X

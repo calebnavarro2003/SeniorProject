@@ -1,20 +1,17 @@
 import { useNavigate } from "react-router-dom";
+import { fetchAllModules } from "../../Services/UserService";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState([]);
 
   useEffect(() => {
-    // Fetch the modules from the backend
-    axios
-      .get("http://localhost:8080/module/allmodules", { withCredentials: true })
-      .then((response) => {
-        setModules(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the modules!", error);
-      });
+    const fetchModulesData = async () => {
+      const response = await fetchAllModules();
+      setModules(response);
+    };
+  
+    fetchModulesData();
   }, []);
 
   const navigate = useNavigate();
@@ -29,7 +26,7 @@ const ModulesPage = () => {
         Available Modules
       </h1>
       <div className="flex flex-col gap-4 w-full px-6 pb-4 overflow-auto">
-        {modules.map((module) => (
+        {modules?.map((module) => (
           <div
           key={module.moduleId}
           className="bg-white shadow-md p-4 rounded-lg text-center cursor-pointer hover:bg-gray-200"

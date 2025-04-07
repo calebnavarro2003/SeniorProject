@@ -5,7 +5,7 @@ import ModuleOverview from "./ModuleOverview";
 import QuestionPage from "./QuestionPage";
 import ReviewPage from "./ReviewPage";
 import ReviewResultsPage from "./ResultsPage";
-import { fetchUserEmail, fetchUserId, fetchUserGrade, fetchModuleAnswers, fetchModuleDetails, submitAnswers } from "../../services/userService";
+import { fetchUserInfo, fetchUserGrade, fetchModuleAnswers, fetchModuleDetails, submitAnswers } from "../../Services/UserService";
 
 const ModuleDetail = () => {
   const { moduleId } = useParams();
@@ -26,8 +26,9 @@ const ModuleDetail = () => {
   useEffect(() => {
     (async () => {
       try {
-        const userEmail = await fetchUserEmail();
-        const userId = await fetchUserId(userEmail);
+        const userInfo = await fetchUserInfo();
+        const userEmail = userInfo.email;
+        const userId = userInfo.userId;
         const moduleData = await fetchModuleDetails(moduleId);
         setModule(moduleData);
         setUserDetails({ userId, email: userEmail });

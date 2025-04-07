@@ -2,27 +2,16 @@ import axios from "axios";
 
 const BASE_URL = "http://localhost:8080";
 
-
-export const fetchUserEmail = async () => {
-  try {
-    const response = await axios.get(`${BASE_URL}/get-user-info`, { withCredentials: true });
-    return response.data.email;
-  } catch (error) {
-    console.error("Error fetching user info!", error);
-    throw error;
-  }
-};
-
-export const fetchUserId = async (email) => {
-  try {
-    const encodedEmail = encodeURIComponent(email);
-    const response = await axios.get(`${BASE_URL}/${encodedEmail}/id`, { withCredentials: true });
+export const fetchUserInfo = async () => {
+  try{
+    const response = await axios.get(`${BASE_URL}/get-user-info`, {
+        withCredentials: true
+      })
     return response.data;
-  } catch (error) {
-    console.error("Error fetching user ID!", error);
-    throw error;
+  } catch(err){
+      throw err;
   }
-};
+}
 
 export const fetchUserGrade = async (userId, moduleId) => {
   try {
@@ -33,6 +22,18 @@ export const fetchUserGrade = async (userId, moduleId) => {
     throw error;
   }
 };
+
+export const fetchAllModules = async () => {
+  try{
+    const response = await axios.get(`${BASE_URL}/module/allmodules`, {
+        withCredentials: true
+    })
+    console.log(response)
+    return response.data;
+  }catch(err) {
+      throw err;
+}
+}
 
 export const fetchAllModuleGrades = async (userId) => {
     try {
@@ -73,3 +74,4 @@ export const submitAnswers = async (answers) => {
     throw error;
   }
 };
+
