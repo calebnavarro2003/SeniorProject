@@ -1,21 +1,18 @@
 import { useNavigate } from "react-router-dom";
 import React, { useEffect, useState } from "react";
-import axios from "axios";
+import { fetchAllModules } from "../../../Services/UserService";
 
 const ModulesPage = () => {
   const [modules, setModules] = useState([]);
   const navigate = useNavigate();
 
   useEffect(() => {
-    // Fetch the modules from the backend
-    axios
-      .get("http://localhost:8080/module/allmodules", { withCredentials: true })
-      .then((response) => {
-        setModules(response.data);
-      })
-      .catch((error) => {
-        console.error("There was an error fetching the modules!", error);
-      });
+    const fetchModulesData = async () => {
+      const response = await fetchAllModules();
+      setModules(response);
+    };
+  
+    fetchModulesData();
   }, []);
 
   const handleNavigateToModule = (moduleId, moduleTitle, moduleDescription) => {
