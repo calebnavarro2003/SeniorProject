@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { messages } from '../../constants/WelcomeMessages';
+import { tierMessages } from '../../constants/TierMessages';
 import { fetchUserInfo, fetchAllModuleGrades } from '../../Services/UserService';
 
 const getRandomMessage = (messageArray) => {
@@ -7,14 +8,18 @@ const getRandomMessage = (messageArray) => {
   return messageArray[randomIndex];
 };
 
-const getCurrentModule = () => {
-  // Add actual logic here; currently defaults to module0
-  return 'module0';
+const getCurrentModule = (grades) => {
+  let maxModule = 0;
+  grades.forEach((grade) => {
+    if (grade.id.moduleId >= maxModule && grade.id.moduleId <= maxModule + 1 && grade.id.moduleId <= 7) {
+      maxModule = grade.id.moduleId;
+    }
+  });
+  return "module" + (maxModule + 1 <= 7 ? maxModule + 1 : 7);
 };
 
 const calculateMedals = (grades) => {
   const medals = { gold: 0, silver: 0, bronze: 0 };
-
   grades.forEach((grade) => {
     if (grade.percentage >= 90) {
       medals.gold += 1;
@@ -24,8 +29,21 @@ const calculateMedals = (grades) => {
       medals.bronze += 1;
     }
   });
-
   return medals;
+};
+
+const getTier = (medals) => {
+  const totalMedals = medals.gold + medals.silver + medals.bronze;
+
+  if (medals.gold >= 5) {
+    return 'tier4';
+  } else if (medals.gold >= 2 && totalMedals >= 5) {
+    return 'tier3';
+  } else if (totalMedals >= 3) {
+    return 'tier2';
+  } else {
+    return 'tier1';
+  }
 };
 
 export default function Dashboard() {
@@ -44,9 +62,15 @@ export default function Dashboard() {
         const medalCounts = calculateMedals(grades);
         setMedals(medalCounts);
 
-        const moduleKey = getCurrentModule();
-        const selectedMessage = getRandomMessage(messages[moduleKey]);
-        setRandomMessage(selectedMessage);
+        const moduleKey = getCurrentModule(grades);
+        const selectedModuleMessage = getRandomMessage(messages[moduleKey]);
+
+        const tier = getTier(medalCounts);
+        const selectedTierMessage = getRandomMessage(tierMessages[tier]);
+        
+        setBannerMessage(selectedModuleMessage);
+        setRandomMessage(selectedTierMessage);
+
         setShowBanner(true);
       } catch (error) {
         console.error("Error initializing dashboard:", error);
@@ -71,7 +95,7 @@ export default function Dashboard() {
         </div>
       )}
 
-      { /* Top Section */ }
+      {/* Top Section */}
       <div className="flex flex-col md:flex-row md:h-64 w-full bg-white rounded-lg shadow gap-4 overflow-hidden">
         <div className="md:w-1/2 w-full flex flex-col justify-center text-3xl px-6 py-4">
           <div className="mb-4">{randomMessage}</div>
