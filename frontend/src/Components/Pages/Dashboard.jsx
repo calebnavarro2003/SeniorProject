@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { messages } from '../../constants/WelcomeMessages';
 import { fetchUserInfo, fetchAllModuleGrades } from '../../Services/UserService';
+import ProgressMap from '../ProgressMap';
 
 const getRandomMessage = (messageArray) => {
   const randomIndex = Math.floor(Math.random() * messageArray.length);
@@ -107,7 +108,7 @@ export default function Dashboard() {
       <div className="flex flex-col flex-1 bg-white rounded-lg shadow-md h-full">
         <div className="text-3xl my-8 ml-8">Your current progress</div>
         <div className="w-full h-full px-4 pb-4">
-          {/* Add progress map here */}
+          <ProgressMap />
         </div>
       </div>
     </div>
