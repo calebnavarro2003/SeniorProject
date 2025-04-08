@@ -9,13 +9,15 @@ const getRandomMessage = (messageArray) => {
 };
 
 const getCurrentModule = (grades) => {
-  let maxModule = 0;
-  grades.forEach((grade) => {
-    if (grade.id.moduleId >= maxModule && grade.id.moduleId <= maxModule + 1 && grade.id.moduleId <= 7) {
-      maxModule = grade.id.moduleId;
+  const completedModules = new Set(grades.map(grade => grade.id.moduleId));
+
+  for (let moduleId = 0; moduleId <= 7; moduleId++) {
+    if (!completedModules.has(moduleId)) {
+      return `module${moduleId}`;
     }
-  });
-  return "module" + (maxModule + 1 <= 7 ? maxModule + 1 : 7);
+  }
+
+  return "module7";  // If all modules from 0 to 7 are completed, return the last module "module7"
 };
 
 const calculateMedals = (grades) => {
@@ -32,10 +34,13 @@ const calculateMedals = (grades) => {
   return medals;
 };
 
-const getTier = (medals) => {
+const getTier = (grades, medals) => {
   const totalMedals = medals.gold + medals.silver + medals.bronze;
+  const totalCompletedModules = grades.length;
 
-  if (medals.gold >= 5) {
+  if (totalCompletedModules === 0) {
+    return 'tier0';
+  } else if (medals.gold >= 5) {
     return 'tier4';
   } else if (medals.gold >= 2 && totalMedals >= 5) {
     return 'tier3';
@@ -65,7 +70,7 @@ export default function Dashboard() {
         const moduleKey = getCurrentModule(grades);
         const selectedModuleMessage = getRandomMessage(messages[moduleKey]);
 
-        const tier = getTier(medalCounts);
+        const tier = getTier(grades, medals);
         const selectedTierMessage = getRandomMessage(tierMessages[tier]);
         
         setBannerMessage(selectedModuleMessage);
