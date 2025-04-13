@@ -3,22 +3,26 @@ import { messages } from '../../constants/WelcomeMessages';
 import { tierMessages } from '../../constants/TierMessages';
 import { fetchUserInfo, fetchAllModuleGrades } from '../../Services/UserService';
 import ProgressMap from '../ProgressMap';
+import { useModules } from '../../Services/ModulesContext'; // Import the useModules hook
 
 const getRandomMessage = (messageArray) => {
   const randomIndex = Math.floor(Math.random() * messageArray.length);
   return messageArray[randomIndex];
 };
 
-const getCurrentModule = (grades) => {
+const getCurrentModule = (grades, modules) => {
   const completedModules = new Set(grades.map(grade => grade.id.moduleId));
-
-  for (let moduleId = 0; moduleId <= 7; moduleId++) {
-    if (!completedModules.has(moduleId)) {
-      return `module${moduleId}`;
+  for (const module of modules) {
+    if (!completedModules.has(module.moduleId)) {
+      return `module${module.moduleId}`;
     }
   }
+  return `allDone`;
+};
 
-  return "module7";  // If all modules from 0 to 7 are completed, return the last module "module7"
+const getCompletedModules = (grades) => {
+  const completedModules = new Set(grades.map(grade => grade.id.moduleId));
+  return Array.from(completedModules); // Convert Set to Array for easier usage
 };
 
 const calculateMedals = (grades) => {
@@ -57,6 +61,9 @@ export default function Dashboard() {
   const [bannerMessage, setBannerMessage] = useState('Welcome to LearnOS!');
   const [randomMessage, setRandomMessage] = useState('');
   const [medals, setMedals] = useState({ gold: 0, silver: 0, bronze: 0 });
+  const [completedModules, setCompletedModules] = useState([]);
+  const { modules, loading: modulesLoading } = useModules(); // Use the global modules state
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
     const initialize = async () => {
@@ -64,31 +71,54 @@ export default function Dashboard() {
         const userInfo = await fetchUserInfo();
         const userEmail = userInfo.email;
         const userId = userInfo.id;
+
+        // Fetch grades
         const grades = await fetchAllModuleGrades(userId);
         const medalCounts = calculateMedals(grades);
         setMedals(medalCounts);
 
-        const moduleKey = getCurrentModule(grades);
-        const selectedModuleMessage = getRandomMessage(messages[moduleKey]);
-
-        const tier = getTier(grades, medals);
-        const selectedTierMessage = getRandomMessage(tierMessages[tier]);
+        // Get the current module key for messages
+        const moduleKey = getCurrentModule(grades, modules);
+        const selectedModuleMessage = moduleKey === "allDone" ? 
+                                      getRandomMessage(messages["allDone"]) : 
+                                      getRandomMessage(messages[moduleKey]);
         
+        // Get the tier message
+        const tier = getTier(grades, medalCounts);
+        const selectedTierMessage = getRandomMessage(tierMessages[tier]);
+
+        // Get the list of completed modules
+        const completedModules = getCompletedModules(grades);
+        setCompletedModules(completedModules);
+        
+        // Set banner messages
         setBannerMessage(selectedModuleMessage);
         setRandomMessage(selectedTierMessage);
 
         setShowBanner(true);
+        setLoading(false);
       } catch (error) {
         console.error("Error initializing dashboard:", error);
+        setLoading(false);
       }
     };
 
-    initialize();
-  }, []);
+    if (!modulesLoading) {
+      initialize();
+    }
+  }, [modulesLoading, modules]);
 
   const handleBannerClose = () => {
     setShowBanner(false);
   };
+
+  if (loading || modulesLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <p className="text-2xl">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col px-4 py-4 gap-4 w-full h-full flex-1 bg-gray-100">
@@ -137,7 +167,7 @@ export default function Dashboard() {
       <div className="flex flex-col flex-1 bg-white rounded-lg shadow-md h-full">
         <div className="text-3xl my-8 ml-8">Your current progress</div>
         <div className="w-full h-full px-4 pb-4">
-          <ProgressMap />
+          <ProgressMap completedModules={completedModules} modules={modules}/>
         </div>
       </div>
     </div>

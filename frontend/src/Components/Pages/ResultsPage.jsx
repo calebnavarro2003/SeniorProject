@@ -9,29 +9,34 @@ const ReviewResultsPage = ({ results, userId, moduleId, handleNavigateToQuestion
 
   useEffect(() => {
     if (results != null && !reviewingQuestions) {
-      setGrade(Math.round((results.filter((r) => r.correct).length / results.length) * 100));
+      const correctAnswersCount = results.filter((r) => r.correct).length;
+      const grade = Math.round((correctAnswersCount / results.length) * 100);
+      setGrade(grade);
       setSubmissionResults(results);
       setLoading(false);
+    } else if (reviewingQuestions) {
+      fetchUserResponses();
     } else {
       setGrade(userGrade);
+      setLoading(false);
     }
   }, [results, reviewingQuestions, userGrade]);
 
-  // Get responses if the user is in review mode
-  useEffect(() => {
-    if (reviewingQuestions) {
-      setLoading(true);
-      fetchUserResponsesForModule(userId, moduleId)
-        .then(responses => {
-          setSubmissionResults(responses);
-          setLoading(false);
-        })
-        .catch(error => {
-          console.error('Error retrieving user responses:', error);
-          setLoading(false);
-        });
+  // Fetch user responses for review mode
+  const fetchUserResponses = async () => {
+    setLoading(true);
+    try {
+      const responses = await fetchUserResponsesForModule(userId, moduleId);
+      setSubmissionResults(responses);
+      const correctAnswersCount = responses.filter((r) => r.correct).length;
+      const grade = Math.round((correctAnswersCount / responses.length) * 100);
+      setGrade(grade);
+      setLoading(false);
+    } catch (error) {
+      console.error('Error retrieving user responses:', error);
+      setLoading(false);
     }
-  }, [reviewingQuestions, userId, moduleId]);
+  };
 
   const message = getNudgingMessage(grade);
   const medalImagePath = getMedal(grade);

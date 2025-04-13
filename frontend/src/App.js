@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { BrowserRouter as Router, Routes, Route, useLocation, Navigate } from 'react-router-dom';
 import { AuthContext, AuthProvider } from './Services/AuthContext';
+import { ModulesProvider, useModules } from './Services/ModulesContext'; // Import context
 import Login from "./Components/Pages/Login";
 import Dashboard from "./Components/Pages/Dashboard";
 import Settings from "./Components/Pages/Settings";
@@ -20,9 +21,17 @@ import UserService from './Services/UserService';
 
 function App() {
   const location = useLocation();
-  // Get authentication state from AuthContext
   const { isAuthenticated, isAdmin } = useContext(AuthContext);
+  const { modules, loading: modulesLoading } = useModules(); // Utilize the global state
   const isAdminRoute = location.pathname.startsWith("/admin");
+
+  if (modulesLoading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <p className="text-2xl">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex md:flex-row flex-col h-screen">
@@ -45,25 +54,19 @@ function App() {
           </Route>
 
           {/* Admin-only private routes */}
-          {
-            <Route element={<PrivateRoute requiredRole="ADMIN"/>}>
-              <Route path="/admin/dashboard" element={<InstructorDashboard />} />
-              <Route path="/admin/settings" element={<Settings />} />
-              <Route path="/admin/modules" element={<InstructorModules />} />
-              <Route path="/admin/module/new" element={<InstructorModuleCreator />} />
-              <Route path="/admin/module/:moduleID" element={<InstructorModuleDetail />} />
-              <Route path="/admin/module/:moduleID/edit" element={<InstructorModuleEditor />} />
-              <Route path="/admin/module/:moduleID/question/:questionID" element={<InstructorQuestionDetail />} />
-              <Route path="/admin/module/:moduleID/question/:questionID/edit" element={<InstructorQuestionEditor />} />
-            </Route>
-          }
+          <Route element={<PrivateRoute requiredRole="ADMIN"/>}>
+            <Route path="/admin/dashboard" element={<InstructorDashboard />} />
+            <Route path="/admin/settings" element={<Settings />} />
+            <Route path="/admin/modules" element={<InstructorModules />} />
+            <Route path="/admin/module/new" element={<InstructorModuleCreator />} />
+            <Route path="/admin/module/:moduleID" element={<InstructorModuleDetail />} />
+            <Route path="/admin/module/:moduleID/edit" element={<InstructorModuleEditor />} />
+            <Route path="/admin/module/:moduleID/question/:questionID" element={<InstructorQuestionDetail />} />
+            <Route path="/admin/module/:moduleID/question/:questionID/edit" element={<InstructorQuestionEditor />} />
+          </Route>
 
           {/* Optionally, catch-all redirect */}
-          {
-            !location.pathname.startsWith("/login/oauth2/code/google") &&
-            <Route path="*" element={<Navigate to="/" replace />} />
-          }
-          {/* <Route path="*" element={<Navigate to="/" replace />} /> */}
+          { !location.pathname.startsWith("/login/oauth2/code/google") && <Route path="*" element={<Navigate to="/" replace />} /> }
         </Routes>
       </div>
     </div>
@@ -74,7 +77,9 @@ function AppWrapper() {
   return (
     <Router>
       <AuthProvider>
-        <App />
+        <ModulesProvider>
+          <App />
+        </ModulesProvider>
       </AuthProvider>
     </Router>
   );

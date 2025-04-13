@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useContext } from "react";
 import { useParams } from "react-router-dom";
 import ContentPage from "./ContentPage";
 import ModuleOverview from "./ModuleOverview";
@@ -6,9 +6,11 @@ import QuestionPage from "./QuestionPage";
 import ReviewPage from "./ReviewPage";
 import ReviewResultsPage from "./ResultsPage";
 import { fetchUserInfo, fetchUserGrade, fetchModuleAnswers, fetchModuleDetails, submitAnswers } from "../../Services/UserService";
+import { useModules } from "../../Services/ModulesContext";  // Import the ModulesContext
 
 const ModuleDetail = () => {
   const { moduleId } = useParams();
+  const { modules, loading: modulesLoading } = useModules(); // Use the ModulesContext
   const [module, setModule] = useState(null);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [showImage, setShowImage] = useState(false);
@@ -23,6 +25,7 @@ const ModuleDetail = () => {
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [reviewingQuestions, setReviewingQuestions] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [moduleInfo, setModuleInfo] = useState(null);  // State to store moduleInfo derived from global context
 
   // Fetch Requests
   useEffect(() => {
@@ -32,13 +35,18 @@ const ModuleDetail = () => {
         const userInfo = await fetchUserInfo();
         const userEmail = userInfo.email;
         const userId = userInfo.id;
+        setUserDetails({ userId, email: userEmail });
+
         const moduleData = await fetchModuleDetails(moduleId);
         setModule(moduleData);
-        setUserDetails({ userId: userId, email: userEmail });
 
-        const userGrade = await fetchUserGrade(userId, moduleId);
-        if (typeof userGrade === "number") {
-          setUserGrade(userGrade);
+        // Remove fetchModuleInfo and use global modules data instead
+        const moduleInfo = modules.find(module => module.moduleId.toString() === moduleId);
+        setModuleInfo(moduleInfo);
+
+        const fetchedUserGrade = await fetchUserGrade(userId, moduleId);
+        if (typeof fetchedUserGrade === "number") {
+          setUserGrade(fetchedUserGrade);
           setCompletionStatus(true);
           setReviewingQuestions(true);
         } else {
@@ -50,7 +58,7 @@ const ModuleDetail = () => {
       }
       setLoading(false);
     })();
-  }, [moduleId]);
+  }, [moduleId, modules]);
 
   useEffect(() => {
     if (completionStatus && userDetails.userId) {
@@ -72,8 +80,7 @@ const ModuleDetail = () => {
     }
   }, [completionStatus, userDetails.userId, moduleId]);
 
-  if (loading) return <div>Loading...</div>;
-
+  if (loading || modulesLoading) return <div>Loading...</div>;
   if (!module) return <div>Loading...</div>;
 
   const handleStartModule = () => {
@@ -203,6 +210,7 @@ const ModuleDetail = () => {
             reviewModule={completionStatus ? handleReviewModule : null}
             completionStatus={completionStatus}
             grade={userGrade}
+            moduleInfo={moduleInfo}
           />
         )
       ) : reviewAnswers && !reviewingQuestions ? (
