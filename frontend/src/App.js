@@ -37,7 +37,7 @@ function App() {
     <div className="flex md:flex-row flex-col h-screen">
       {isAuthenticated && location.pathname !== "/" && (
         <div className="sticky top-0 z-50">
-          {isAdminRoute ? <InstructorSidebar /> : <Sidebar />}
+          {(isAdminRoute && isAuthenticated) ? <InstructorSidebar /> : <Sidebar />}
         </div>
       )}
       <div className="flex-1 flex flex-col">

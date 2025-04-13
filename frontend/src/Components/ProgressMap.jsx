@@ -1,5 +1,6 @@
 import React, { useEffect, useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { fetchAllModuleGrades } from '../Services/UserService';
 
 function ProgressMap({ completedModules, modules }) {
     const modulesData = useMemo(() => {
@@ -8,6 +9,7 @@ function ProgressMap({ completedModules, modules }) {
             completed: completedModules.includes(module.moduleId),
         }));
     }, [completedModules, modules]);
+
 
     const containerRef = useRef(null);
     const [positions, setPositions] = useState([]);
@@ -29,6 +31,7 @@ function ProgressMap({ completedModules, modules }) {
             setPositions(newPositions);
         }
     }, [modulesData]);
+
 
     const firstIncompleteIndex = modulesData.findIndex(module => !module.completed);
 

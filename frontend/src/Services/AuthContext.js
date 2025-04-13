@@ -22,9 +22,22 @@ export const AuthProvider = ({ children }) => {
         }
     };
 
+    const logout = async () => {
+        try {
+            // Calling your backend logout endpoint which clears the cookie
+            await axios.post('http://localhost:8080/auth/logout', {}, { withCredentials: true });
+        } catch (error) {
+            console.error('Error during logout', error);
+        } finally {
+            // Clear the client auth state after logout
+            setIsAuthenticated(false);
+            setIsAdmin(false);
+        }
+    }
+
     useEffect(() => {
         refreshAuthState();
-    }, []);
+    }, [refreshAuthState]);
 
     // While loading, you can return a loading indicator (or null)
     if (loading) {
@@ -32,7 +45,7 @@ export const AuthProvider = ({ children }) => {
     }
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, isAdmin, refreshAuthState }}>
+        <AuthContext.Provider value={{ isAuthenticated, isAdmin, refreshAuthState, logout }}>
             {children}
         </AuthContext.Provider>
     );

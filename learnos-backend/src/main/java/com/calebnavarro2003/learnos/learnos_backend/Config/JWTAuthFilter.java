@@ -28,13 +28,14 @@ public class JWTAuthFilter extends OncePerRequestFilter {
     OurUserDetailsService ourUserDetailsService;
 
     @Override
-    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
+    protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
+            throws ServletException, IOException {
 
         String jwtToken = null;
-        final String userEmail;
+        String userEmail = null;
 
         Cookie[] cookies = request.getCookies();
-        if(cookies != null) {
+        if (cookies != null) {
             for (Cookie cookie : cookies) {
                 if ("jwt".equals(cookie.getName())) {
                     jwtToken = cookie.getValue();
@@ -43,11 +44,12 @@ public class JWTAuthFilter extends OncePerRequestFilter {
             }
         }
 
-        if(jwtToken == null){
-            // Passes the request to the next filter in the filter chain for further processing.
-            response.sendError(HttpServletResponse.SC_UNAUTHORIZED, "Unauthorized: JWT token is missing");
+        // Instead of sending error immediately, simply pass along if no token is found.
+        if (jwtToken == null) {
+            filterChain.doFilter(request, response);
             return;
         }
+
         userEmail = jwtUtils.extractUsername(jwtToken);
 
         if (userEmail != null && SecurityContextHolder.getContext().getAuthentication() == null) {
@@ -60,6 +62,7 @@ public class JWTAuthFilter extends OncePerRequestFilter {
                 SecurityContextHolder.getContext().setAuthentication(authToken);
             }
         }
+
         filterChain.doFilter(request, response);
     }
 }

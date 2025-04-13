@@ -1,10 +1,21 @@
 import { useNavigate } from 'react-router-dom';
+import { AuthContext } from '../../Services/AuthContext';
+import { useContext } from 'react';
 
 export default function Settings() {
   const navigate = useNavigate();
 
-  const handleLogout = () => {
-    navigate('/'); // Navigates to the home page (or login page)
+  const { logout } = useContext(AuthContext);
+
+  // Create a click handler that calls logout and then navigates.
+  const handleLogout = async () => {
+    try {
+      await logout(); // waits for logout to finish if it's async
+    } catch (error) {
+      console.error('Error during logout:', error);
+    } finally {
+      navigate('/'); // redirect to the home or login page
+    }
   };
 
   return (

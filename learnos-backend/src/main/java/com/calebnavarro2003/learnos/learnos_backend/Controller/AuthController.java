@@ -5,11 +5,13 @@ import com.calebnavarro2003.learnos.learnos_backend.Service.OurUserDetailsServic
 import io.jsonwebtoken.Claims;
 import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -63,5 +65,18 @@ public class AuthController {
         }
 
         return ResponseEntity.ok(responseBody);
+    }
+
+    @PostMapping("/logout")
+    public ResponseEntity<String> logout(HttpServletResponse response) {
+        // Create a new cookie with the same name "jwt"
+        Cookie cookie = new Cookie("jwt", null);
+        cookie.setHttpOnly(true);
+        cookie.setSecure(true); // use true if your app is in production with HTTPS
+        cookie.setPath("/");   // Ensure the path matches where the cookie was originally set
+        cookie.setMaxAge(0);   // Max age 0 deletes the cookie immediately
+        response.addCookie(cookie);
+
+        return ResponseEntity.ok("Logged out successfully");
     }
 }
