@@ -20,17 +20,30 @@ function ProgressMap({ completedModules, modules }) {
     };
 
     useEffect(() => {
-        if (containerRef.current) {
+        const recalcPositions = () => {
+          if (containerRef.current) {
             const containerWidth = containerRef.current.offsetWidth;
             const containerHeight = containerRef.current.offsetHeight;
             const spacing = containerWidth / (modulesData.length + 1);
             const newPositions = modulesData.map((_, i) => ({
-                x: spacing * (i + 1),
-                y: Math.random() * (containerHeight * 0.6) + (containerHeight * 0.2),
+              x: spacing * (i + 1),
+              y: Math.random() * (containerHeight * 0.6) + (containerHeight * 0.2),
             }));
             setPositions(newPositions);
-        }
-    }, [modulesData]);
+          }
+        };
+      
+        // Calculate positions on mount and when modulesData changes
+        recalcPositions();
+      
+        // Add event listener to recalc positions on screen resize
+        window.addEventListener('resize', recalcPositions);
+      
+        // Cleanup: remove the event listener when the component unmounts
+        return () => {
+          window.removeEventListener('resize', recalcPositions);
+        };
+      }, [modulesData]);
 
 
     const firstIncompleteIndex = modulesData.findIndex(module => !module.completed);
