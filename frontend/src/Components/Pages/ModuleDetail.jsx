@@ -5,7 +5,7 @@ import ModuleOverview from "./ModuleOverview";
 import QuestionPage from "./QuestionPage";
 import ReviewPage from "./ReviewPage";
 import ReviewResultsPage from "./ResultsPage";
-import { fetchUserInfo, fetchUserGrade, fetchModuleAnswers, fetchModuleDetails, submitAnswers } from "../../Services/UserService";
+import { fetchUserInfo, fetchUserGrade, fetchModuleAnswers, fetchModuleDetails, submitAnswers, fetchModuleInfo } from "../../Services/UserService";
 
 const ModuleDetail = () => {
   const { moduleId } = useParams();
@@ -23,6 +23,7 @@ const ModuleDetail = () => {
   const [correctAnswer, setCorrectAnswer] = useState(null);
   const [reviewingQuestions, setReviewingQuestions] = useState(false);
   const [loading, setLoading] = useState(true);
+  const [moduleInfo, setModuleInfo] = useState(null);
 
   // Fetch Requests
   useEffect(() => {
@@ -34,6 +35,8 @@ const ModuleDetail = () => {
         const userId = userInfo.id;
         const moduleData = await fetchModuleDetails(moduleId);
         setModule(moduleData);
+        const moduleInfo = await fetchModuleInfo(moduleId);
+        setModuleInfo(moduleInfo);
         setUserDetails({ userId: userId, email: userEmail });
 
         const userGrade = await fetchUserGrade(userId, moduleId);
@@ -203,6 +206,7 @@ const ModuleDetail = () => {
             reviewModule={completionStatus ? handleReviewModule : null}
             completionStatus={completionStatus}
             grade={userGrade}
+            moduleInfo={moduleInfo}
           />
         )
       ) : reviewAnswers && !reviewingQuestions ? (

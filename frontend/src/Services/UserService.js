@@ -85,3 +85,13 @@ export const fetchUserResponsesForModule = async (userId, moduleId) => {
     throw error;
   }
 };
+
+export const fetchModuleInfo = async (moduleId) => {
+  try {
+    const response = await axios.get(`${BASE_URL}/module/${moduleId}`, { withCredentials: true });
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching module information for a given module:", error);
+    throw error;
+  }
+}
