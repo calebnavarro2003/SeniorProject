@@ -1,7 +1,7 @@
 import React from "react";
 
 const ContentPage = ({ currentQuestion, handlePrevious, handleNext, reviewingQuestions, handleReviewModule }) => (
-  <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full">
+  <div className="flex flex-col items-center h-full w-full">
     <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
       <div className="flex-grow mb-4 overflow-auto">
         <p className="text-lg text-gray-700">{currentQuestion.content}</p>

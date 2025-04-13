@@ -26,13 +26,36 @@ function Sidebar() {
         setIsMenuOpen(!isMenuOpen);
     };
 
+    const getFirstName = (fullName) => {
+        if (!fullName) return "User"; 
+      
+        // If the name includes a comma, assume the format is "Last, First" or "Last, First MiddleInitial"
+        if (fullName.includes(",")) {
+          const parts = fullName.split(",");
+          if (parts.length > 1) {
+            const firstNameCandidate = parts[1].trim()
+            const firstSpaceIndex = firstNameCandidate.indexOf(" ");
+            return firstSpaceIndex !== -1
+              ? firstNameCandidate.substring(0, firstSpaceIndex)
+              : firstNameCandidate;
+          }
+          return fullName; 
+        } 
+        // Otherwise, if the name contains a space, assume the format is "First Last" or similar
+        else if (fullName.includes(" ")) {
+          return fullName.split(" ")[0];
+        }
+        
+        return fullName;
+      };
+
     return (
         <div>
             {/* Desktop Sidebar */}
             <div className="hidden md:flex md:flex-col bg-purple-600 text-white p-8 min-h-screen">
                 <div className="flex flex-row pt-4 gap-8">
                     <h2 className="text-3xl font-bold text-wrap">
-                        Welcome, <br /> {user ? user.name.substring(0, user.name.indexOf(' ')) : "User"}
+                        Welcome, <br /> {user ? getFirstName(user.name) : "User"}
                     </h2>
                     <div className="relative inline-flex items-center justify-center w-12 h-12 overflow-hidden bg-gray-100 rounded-full dark:bg-gray-600">
                         {user ? (
@@ -76,7 +99,7 @@ function Sidebar() {
                             </svg>
                         )}
                     </div>
-                    <h2 className="text-xl font-bold">Welcome, {user ? user.given_name : "User"}</h2>
+                    <h2 className="text-xl font-bold">Welcome, {user ? getFirstName(user.name) : "User"}</h2>
                 </div>
                 <button onClick={toggleMenu} className="focus:outline-none">
                     {isMenuOpen ? (

@@ -64,6 +64,7 @@ export default function Dashboard() {
   const [completedModules, setCompletedModules] = useState([]);
   const { modules, loading: modulesLoading } = useModules(); // Use the global modules state
   const [loading, setLoading] = useState(true);
+  const [progressMapKey, setProgressMapKey] = useState(0);
 
   useEffect(() => {
     const initialize = async () => {
@@ -110,6 +111,8 @@ export default function Dashboard() {
 
   const handleBannerClose = () => {
     setShowBanner(false);
+    // Update the key to force ProgressMap to re-mount
+    setProgressMapKey((prevKey) => prevKey + 1);
   };
 
   if (loading || modulesLoading) {
@@ -123,20 +126,20 @@ export default function Dashboard() {
   return (
     <div className="flex flex-col px-4 py-4 gap-4 w-full h-full flex-1 bg-gray-100">
       {showBanner && (
-        <div className=" w-full bg-purple-600 text-white p-4 rounded-lg shadow-md flex justify-between items-center">
+        <div className="w-full bg-purple-600 text-white p-4 rounded-lg shadow-md flex justify-between items-center">
           <span>{bannerMessage}</span>
           <button onClick={handleBannerClose} className="text-white font-bold">
             X
           </button>
         </div>
       )}
-
+  
       {/* Top Section */}
       <div className="flex flex-col md:flex-row md:h-64 w-full bg-white rounded-lg shadow gap-4 overflow-hidden">
         <div className="md:w-1/2 w-full flex flex-col justify-center text-3xl px-6 py-4">
-          <div className="mb-4">{randomMessage}</div>
+          <div className="m-4">{randomMessage}</div>
         </div>
-        <div className="md:w-1/2 mt-9 h-40 w-full flex justify-center items-center pb-4">
+        <div className="md:w-1/2 w-full flex justify-center items-center pb-4 mb-4">
           <div className="flex flex-col mx-2 text-center items-center">
             <img
               className="object-contain w-70 h-70"
@@ -163,13 +166,15 @@ export default function Dashboard() {
           </div>
         </div>
       </div>
-
-      <div className="flex flex-col flex-1 bg-white rounded-lg shadow-md h-full">
-        <div className="text-3xl my-8 ml-8">Your current progress</div>
-        <div className="w-full h-full px-4 pb-4">
-          <ProgressMap completedModules={completedModules} modules={modules}/>
+  
+      {/* Bottom section */}
+      <div className="flex flex-col flex-1 bg-white rounded-lg shadow-md">
+        <div className="text-3xl m-8">Your current progress</div>
+        <div className="w-full h-full flex-1 px-4 pb-4 overflow-auto">
+          <ProgressMap key={progressMapKey} completedModules={completedModules} modules={modules} />
         </div>
       </div>
     </div>
   );
+  
 }
