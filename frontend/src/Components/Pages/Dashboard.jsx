@@ -1,26 +1,33 @@
 import React, { useEffect, useState } from 'react';
 import { messages } from '../../constants/WelcomeMessages';
 import { tierMessages } from '../../constants/TierMessages';
-import { fetchUserInfo, fetchAllModuleGrades } from '../../Services/UserService';
+import { fetchUserInfo, fetchAllModuleGrades, fetchAllModules } from '../../Services/UserService';
 import ProgressMap from '../ProgressMap';
 
+// Function to get a random message from a message array
 const getRandomMessage = (messageArray) => {
   const randomIndex = Math.floor(Math.random() * messageArray.length);
   return messageArray[randomIndex];
 };
 
-const getCurrentModule = (grades) => {
+// Function to get the current module based on grades and fetched modules
+const getCurrentModule = (grades, modules) => {
   const completedModules = new Set(grades.map(grade => grade.id.moduleId));
-
-  for (let moduleId = 0; moduleId <= 7; moduleId++) {
-    if (!completedModules.has(moduleId)) {
-      return `module${moduleId}`;
+  for (const module of modules) {
+    if (!completedModules.has(module.moduleId)) {
+      return `module${module.moduleId}`;
     }
   }
-
-  return "module7";  // If all modules from 0 to 7 are completed, return the last module "module7"
+  return `module${modules[modules.length - 1].moduleId}`;  // If all modules are completed, return the last module
 };
 
+// Function to get the list of completed modules based on grades
+const getCompletedModules = (grades) => {
+  const completedModules = new Set(grades.map(grade => grade.id.moduleId));
+  return Array.from(completedModules); // Convert Set to Array for easier usage
+};
+
+// Function to calculate medals based on grades
 const calculateMedals = (grades) => {
   const medals = { gold: 0, silver: 0, bronze: 0 };
   grades.forEach((grade) => {
@@ -35,6 +42,7 @@ const calculateMedals = (grades) => {
   return medals;
 };
 
+// Function to determine the tier based on grades and medals
 const getTier = (grades, medals) => {
   const totalMedals = medals.gold + medals.silver + medals.bronze;
   const totalCompletedModules = grades.length;
@@ -52,11 +60,14 @@ const getTier = (grades, medals) => {
   }
 };
 
+// Dashboard Component Implementation
 export default function Dashboard() {
   const [showBanner, setShowBanner] = useState(false);
   const [bannerMessage, setBannerMessage] = useState('Welcome to LearnOS!');
   const [randomMessage, setRandomMessage] = useState('');
   const [medals, setMedals] = useState({ gold: 0, silver: 0, bronze: 0 });
+  const [completedModules, setCompletedModules] = useState([]);
+  const [modules, setModules] = useState([]);
 
   useEffect(() => {
     const initialize = async () => {
@@ -64,16 +75,29 @@ export default function Dashboard() {
         const userInfo = await fetchUserInfo();
         const userEmail = userInfo.email;
         const userId = userInfo.id;
+
+        // Fetch all modules
+        const fetchedModules = await fetchAllModules();
+        setModules(fetchedModules);
+
+        // Fetch grades
         const grades = await fetchAllModuleGrades(userId);
         const medalCounts = calculateMedals(grades);
         setMedals(medalCounts);
 
-        const moduleKey = getCurrentModule(grades);
+        // Get the current module key for messages
+        const moduleKey = getCurrentModule(grades, fetchedModules);
         const selectedModuleMessage = getRandomMessage(messages[moduleKey]);
-
-        const tier = getTier(grades, medals);
-        const selectedTierMessage = getRandomMessage(tierMessages[tier]);
         
+        // Get the tier message
+        const tier = getTier(grades, medalCounts);
+        const selectedTierMessage = getRandomMessage(tierMessages[tier]);
+
+        // Get the list of completed modules
+        const completedModules = getCompletedModules(grades);
+        setCompletedModules(completedModules);
+        
+        // Set banner messages
         setBannerMessage(selectedModuleMessage);
         setRandomMessage(selectedTierMessage);
 
@@ -137,7 +161,7 @@ export default function Dashboard() {
       <div className="flex flex-col flex-1 bg-white rounded-lg shadow-md h-full">
         <div className="text-3xl my-8 ml-8">Your current progress</div>
         <div className="w-full h-full px-4 pb-4">
-          <ProgressMap />
+          <ProgressMap completedModules={completedModules} modules={modules}/>
         </div>
       </div>
     </div>
