@@ -18,7 +18,7 @@ const getCurrentModule = (grades, modules) => {
       return `module${module.moduleId}`;
     }
   }
-  return `allDone`;  // If all modules are completed, return an empty string
+  return `allDone`;  // If all modules are completed, return an indication that all done
 };
 
 // Function to get the list of completed modules based on grades
@@ -68,6 +68,7 @@ export default function Dashboard() {
   const [medals, setMedals] = useState({ gold: 0, silver: 0, bronze: 0 });
   const [completedModules, setCompletedModules] = useState([]);
   const [modules, setModules] = useState([]);
+  const [loading, setLoading] = useState(true); // Add loading state
 
   useEffect(() => {
     const initialize = async () => {
@@ -87,7 +88,9 @@ export default function Dashboard() {
 
         // Get the current module key for messages
         const moduleKey = getCurrentModule(grades, fetchedModules);
-        const selectedModuleMessage = getRandomMessage(messages[moduleKey]);
+        const selectedModuleMessage = moduleKey === "allDone" ? 
+                                      getRandomMessage(messages["allDone"]) : 
+                                      getRandomMessage(messages[moduleKey]);
         
         // Get the tier message
         const tier = getTier(grades, medalCounts);
@@ -102,8 +105,10 @@ export default function Dashboard() {
         setRandomMessage(selectedTierMessage);
 
         setShowBanner(true);
+        setLoading(false); // Mark loading as false once done
       } catch (error) {
         console.error("Error initializing dashboard:", error);
+        setLoading(false); // Mark loading as false on error
       }
     };
 
@@ -113,6 +118,14 @@ export default function Dashboard() {
   const handleBannerClose = () => {
     setShowBanner(false);
   };
+
+  if (loading) {
+    return (
+      <div className="flex flex-col items-center justify-center h-full">
+        <p className="text-2xl">Loading...</p>
+      </div>
+    );
+  }
 
   return (
     <div className="flex flex-col px-4 py-4 gap-4 w-full h-full flex-1 bg-gray-100">
