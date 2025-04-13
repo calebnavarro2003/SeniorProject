@@ -7,7 +7,6 @@ const ReviewResultsPage = ({ results, userId, moduleId, handleNavigateToQuestion
   const [submissionResults, setSubmissionResults] = useState(results);
   const [loading, setLoading] = useState(true);
 
-  // Calculate grade and set initial submission results on mount or results change
   useEffect(() => {
     if (results != null && !reviewingQuestions) {
       const correctAnswersCount = results.filter((r) => r.correct).length;
