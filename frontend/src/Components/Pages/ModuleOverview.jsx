@@ -20,7 +20,7 @@ const ModuleOverview = ({ module, moduleInfo, startModule, reviewModule, complet
         {completionStatus && grade !== null ? (
           <>
             <div className="mt-auto text-center text-2xl">
-              Your Grade: {grade}%
+              Your Grade: {Math.round(grade)}%
             </div>
             <button className="bg-blue-500 text-white px-6 py-2 rounded" onClick={reviewModule}>
               Review Module

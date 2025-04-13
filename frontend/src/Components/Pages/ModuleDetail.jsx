@@ -33,15 +33,17 @@ const ModuleDetail = () => {
         const userInfo = await fetchUserInfo();
         const userEmail = userInfo.email;
         const userId = userInfo.id;
+        setUserDetails({ userId, email: userEmail });
+
         const moduleData = await fetchModuleDetails(moduleId);
         setModule(moduleData);
+
         const moduleInfo = await fetchModuleInfo(moduleId);
         setModuleInfo(moduleInfo);
-        setUserDetails({ userId: userId, email: userEmail });
 
-        const userGrade = await fetchUserGrade(userId, moduleId);
-        if (typeof userGrade === "number") {
-          setUserGrade(userGrade);
+        const fetchedUserGrade = await fetchUserGrade(userId, moduleId);
+        if (typeof fetchedUserGrade === "number") {
+          setUserGrade(fetchedUserGrade);
           setCompletionStatus(true);
           setReviewingQuestions(true);
         } else {
@@ -76,7 +78,6 @@ const ModuleDetail = () => {
   }, [completionStatus, userDetails.userId, moduleId]);
 
   if (loading) return <div>Loading...</div>;
-
   if (!module) return <div>Loading...</div>;
 
   const handleStartModule = () => {
