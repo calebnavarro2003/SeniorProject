@@ -18,7 +18,7 @@ const getCurrentModule = (grades, modules) => {
       return `module${module.moduleId}`;
     }
   }
-  return `module${modules[modules.length - 1].moduleId}`;  // If all modules are completed, return the last module
+  return `allDone`;  // If all modules are completed, return an empty string
 };
 
 // Function to get the list of completed modules based on grades

@@ -54,6 +54,20 @@ export const messages = {
       "This is it! Time to test yourself and reflect on how far you've come in Module 7.",
       "Final challenge unlocked! Can you apply everything you've learned? Let's see!",
       "You've worked hard for this moment—Module 7 is where you shine!"
+    ],
+    allDone: [
+      "Congratulations! You've completed all available modules!",
+      "Great work completing all available content!",
+      "You've done it! You've completed all the modules—amazing achievement!",
+      "Excellent job! You've finished all the modules—you're unstoppable!",
+      "Bravo! You've wrapped up all the modules—your dedication is inspiring!",
+      "Fantastic! You've reached the end—you're a true learning champion!",
+      "Cheers to you! Completing all modules is a big milestone—well done!",
+      "Kudos! You've successfully navigated through all the modules—impressive!",
+      "Outstanding! You've completed every module—your hard work paid off!",
+      "Hats off to you! You've mastered all the modules—time to celebrate!",
+      "Superb effort! You've finished all the modules—you're a pro!",
+      "Way to go! You've conquered all the modules—you're ready for any challenge!"
     ]
   };
   
