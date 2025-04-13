@@ -19,7 +19,7 @@ const ModulesPage = () => {
       <h1 className="w-full text-center text-4xl font-bold text-gray-800 py-4">
         Available Modules
       </h1>
-      <div className="flex flex-col gap-4 w-full px-6 pb-4 overflow-auto">
+      <div className="flex flex-col gap-4 w-full px-4 overflow-auto">
         {modules.map((module) => (
           <div
             key={module.moduleId}

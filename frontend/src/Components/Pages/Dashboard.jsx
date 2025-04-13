@@ -64,6 +64,7 @@ export default function Dashboard() {
   const [completedModules, setCompletedModules] = useState([]);
   const { modules, loading: modulesLoading } = useModules(); // Use the global modules state
   const [loading, setLoading] = useState(true);
+  const [progressMapKey, setProgressMapKey] = useState(0);
 
   useEffect(() => {
     const initialize = async () => {
@@ -110,6 +111,8 @@ export default function Dashboard() {
 
   const handleBannerClose = () => {
     setShowBanner(false);
+    // Update the key to force ProgressMap to re-mount
+    setProgressMapKey((prevKey) => prevKey + 1);
   };
 
   if (loading || modulesLoading) {
@@ -165,10 +168,10 @@ export default function Dashboard() {
       </div>
   
       {/* Bottom section */}
-      <div className="flex flex-col flex-1 bg-white rounded-lg shadow-md min-h-0">
+      <div className="flex flex-col flex-1 bg-white rounded-lg shadow-md">
         <div className="text-3xl m-8">Your current progress</div>
-        <div className="w-full flex-1 px-4 pb-4 overflow-auto">
-          <ProgressMap completedModules={completedModules} modules={modules} />
+        <div className="w-full h-full flex-1 px-4 pb-4 overflow-auto">
+          <ProgressMap key={progressMapKey} completedModules={completedModules} modules={modules} />
         </div>
       </div>
     </div>

@@ -1,7 +1,7 @@
 import React from "react";
 
 const ReviewPage = ({ module, moduleId, selectedAnswers, unansweredCount, handleNavigateToQuestion, handlePreviousQuestion, handleSubmitAnswers }) => (
-  <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full">
+  <div className="flex flex-col items-center h-full w-full">
     <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
       <h2 className="text-3xl font-bold text-gray-800 mb-6">
         Module {moduleId}

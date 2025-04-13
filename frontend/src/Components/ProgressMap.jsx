@@ -74,7 +74,7 @@ function ProgressMap({ completedModules, modules }) {
                     <div key={modulesData[index].id}>
                         {index === firstIncompleteIndex && (
                             <div
-                                className='absolute text-xs font-semibold text-center w-20 -translate-x-1/2'
+                                className='absolute text-xs font-semibold text-center w-20 -translate-x-1/2 z-20'
                                 style={{ left: pos.x - 40, top: pos.y - 40 }}
                             >
                                 Start Here

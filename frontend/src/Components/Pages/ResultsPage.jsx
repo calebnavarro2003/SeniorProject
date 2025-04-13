@@ -52,7 +52,7 @@ const ReviewResultsPage = ({ results, userId, moduleId, handleNavigateToQuestion
   }
 
   return (
-    <div className="flex flex-col items-center h-screen bg-gray-100 p-4 w-full">
+    <div className="flex flex-col items-center h-full  w-full">
       <div className="flex flex-col p-6 bg-white shadow rounded-lg w-full h-full">
         <h2 className="text-3xl font-bold text-gray-800 mb-6">Module {moduleId} Results</h2>
         {submissionResults.map((result, index) => (
