@@ -32,6 +32,7 @@ export const AuthProvider = ({ children }) => {
             // Clear the client auth state after logout
             setIsAuthenticated(false);
             setIsAdmin(false);
+            setLoading(true)
         }
     }
 

@@ -26,11 +26,7 @@ function App() {
   const isAdminRoute = location.pathname.startsWith("/admin");
 
   if (modulesLoading) {
-    return (
-      <div className="flex flex-col items-center justify-center h-full">
-        <p className="text-2xl">Loading...</p>
-      </div>
-    );
+    return <div style={{ width: '100vw', height: '100vh', background: 'white' }}></div>;
   }
 
   return (
