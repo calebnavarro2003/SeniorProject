@@ -2,7 +2,7 @@
 export default function Login() {
 
   const googleLogin = () => {
-    window.location.href = 'http://localhost:8080/oauth2/authorization/google';
+    window.location.href = 'https://learnos-backend-7453408282.us-central1.run.app/oauth2/authorization/google';
   };
 
   return (

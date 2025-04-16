@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "http://localhost:8080";
+const BASE_URL = "https://learnos-backend-7453408282.us-central1.run.app";
 
 export const fetchUserInfo = async () => {
   try{
