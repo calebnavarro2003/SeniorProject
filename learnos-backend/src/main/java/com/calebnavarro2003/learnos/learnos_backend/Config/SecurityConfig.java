@@ -70,9 +70,9 @@ public class SecurityConfig {
                             boolean isAdmin = user.getAuthorities().stream()
                                     .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));
                             if (isAdmin) {
-                                response.sendRedirect("http://localhost:3000/admin/dashboard");
+                                response.sendRedirect("http://34.128.174.245/admin/dashboard");
                             } else {
-                                response.sendRedirect("http://localhost:3000/dashboard");
+                                response.sendRedirect("http://34.128.174.245/dashboard");
                             }
                         })
                 )
