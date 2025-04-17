@@ -1,6 +1,6 @@
 import axios from "axios";
 
-const BASE_URL = "https://learnos-backend-7453408282.us-central1.run.app";
+const BASE_URL = "https://api.oslearn.app";
 
 export const fetchUserInfo = async () => {
   try{

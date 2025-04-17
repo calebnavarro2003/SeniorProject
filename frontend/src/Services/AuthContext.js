@@ -11,7 +11,7 @@ export const AuthProvider = ({ children }) => {
     // Refresh authentication state by calling the backend validation endpoint.
     const refreshAuthState = async () => {
         try {
-            const response = await axios.get('https://learnos-backend-7453408282.us-central1.run.app/auth/validate', { withCredentials: true });
+            const response = await axios.get('https://api.oslearn.app/auth/validate', { withCredentials: true });
             setIsAuthenticated(response.data.authenticated);
             setIsAdmin(response.data.isAdmin || false);
         } catch (error) {
@@ -25,7 +25,7 @@ export const AuthProvider = ({ children }) => {
     const logout = async () => {
         try {
             // Calling your backend logout endpoint which clears the cookie
-            await axios.post('https://learnos-backend-7453408282.us-central1.run.app/auth/logout', {}, { withCredentials: true });
+            await axios.post('https://api.oslearn.app/auth/logout', {}, { withCredentials: true });
         } catch (error) {
             console.error('Error during logout', error);
         } finally {

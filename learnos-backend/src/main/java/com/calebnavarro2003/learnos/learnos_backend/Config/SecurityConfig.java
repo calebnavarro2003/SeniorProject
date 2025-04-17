@@ -5,7 +5,10 @@ import com.calebnavarro2003.learnos.learnos_backend.Service.JwtUtils;
 import com.calebnavarro2003.learnos.learnos_backend.Service.OurUserDetailsService;
 import com.calebnavarro2003.learnos.learnos_backend.Service.UserManagementService;
 import jakarta.servlet.http.Cookie;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
@@ -13,6 +16,7 @@ import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.oauth2.core.user.OAuth2User;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
@@ -20,6 +24,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import org.springframework.web.filter.CorsFilter;
+
+import java.io.IOException;
 import java.util.Arrays;
 
 @Configuration
@@ -39,6 +45,15 @@ public class SecurityConfig {
     @Autowired
     private JWTAuthFilter jwtAuthFilter;
 
+    @Value("${frontend.url}")
+    private String frontendUrl;
+
+    @Value("${frontend.user.dash}")
+    private String userDashUrl;
+
+    @Value("${frontend.admin.dash}")
+    private String adminDashUrl;
+
     @Bean
     SecurityFilterChain defaultSecurityFilterChain(HttpSecurity http) throws Exception {
         http.csrf(AbstractHttpConfigurer::disable)
@@ -50,40 +65,50 @@ public class SecurityConfig {
                                 .anyRequest().authenticated())
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2Login(oauth2 -> oauth2
-                        .successHandler((request, response, authentication) -> {
-                            // Extract the OAuth2User from the authentication object
-                            OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
-
-                            // Process the user (auto-register or update) via your service
-                            User user = userManagementService.processOAuth2User(oAuth2User);
-
-                            String jwt = jwtUtils.generateToken(user);
-
-                            Cookie cookie = new Cookie("jwt", jwt);
-                            cookie.setHttpOnly(true);
-                            cookie.setSecure(true); // Only use Secure if you're using HTTPS
-                            cookie.setPath("/");
-                            cookie.setMaxAge(60 * 60 * 24); // For example, 24 hours
-                            response.addCookie(cookie);
-
-                            // Redirect users based on their roles
-                            boolean isAdmin = user.getAuthorities().stream()
-                                    .anyMatch(grantedAuthority -> grantedAuthority.getAuthority().equals("ADMIN"));
-                            if (isAdmin) {
-                                response.sendRedirect("http://34.128.174.245/admin/dashboard");
-                            } else {
-                                response.sendRedirect("http://34.128.174.245/dashboard");
-                            }
-                        })
+                        .successHandler(this::onAuthenticationSuccess)
                 )
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class);
         return http.build();
     }
 
+    private void onAuthenticationSuccess(
+            HttpServletRequest request,
+            HttpServletResponse response,
+            Authentication authentication
+    ) throws IOException {
+
+        OAuth2User oAuth2User = (OAuth2User) authentication.getPrincipal();
+        User user = userManagementService.processOAuth2User(oAuth2User);
+        String jwt = jwtUtils.generateToken(user);
+
+        // Build Set-Cookie header manually to include SameSite=None
+        StringBuilder sb = new StringBuilder();
+        sb.append("jwt=").append(jwt)
+                .append("; Path=/")
+                .append("; HttpOnly")
+                .append("; Secure");
+
+        // Optionally set domain if needed:
+        // sb.append("; Domain=learnos-backend-7453408282.us-central1.run.app");
+        sb.append("; Max-Age=").append(60 * 60 * 24);
+
+        response.addHeader("Set-Cookie", sb.toString());
+
+        // redirect to frontend
+        boolean isAdmin = user.getAuthorities().stream()
+                .anyMatch(a -> a.getAuthority().equals("ADMIN"));
+
+        String target = isAdmin
+                ? adminDashUrl
+                : userDashUrl;
+
+        response.sendRedirect(target);
+    }
+
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOrigins(Arrays.asList("http://localhost:3000"));
+        configuration.setAllowedOrigins(Arrays.asList(frontendUrl));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setAllowCredentials(true);
@@ -98,7 +123,7 @@ public class SecurityConfig {
     public CorsFilter corsFilter() {
         CorsConfiguration corsConfiguration = new CorsConfiguration();
         corsConfiguration.setAllowCredentials(true);
-        corsConfiguration.addAllowedOrigin("http://localhost:3000");
+        corsConfiguration.addAllowedOrigin(frontendUrl);
         corsConfiguration.addAllowedHeader("*");
         corsConfiguration.addAllowedMethod("*");
 

@@ -2,6 +2,7 @@ package com.calebnavarro2003.learnos.learnos_backend.Service;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Component;
 
@@ -19,11 +20,9 @@ public class JwtUtils {
     private SecretKey key;
     private static final Long EXPIRATION_TIME = 86400000L;
 
-    public JwtUtils() {
-        String secretString = "843567893696976453275974432697R634967R738467R678T3486576834R8763T4783876764538745673865";
-
-        byte[] keyBytes = Base64.getDecoder().decode(secretString.getBytes(StandardCharsets.UTF_8));
-
+    public JwtUtils(@Value("${jwt.secret.key}") String base64Secret) {
+        byte[] keyBytes = Base64.getDecoder()
+                .decode(base64Secret.getBytes(StandardCharsets.UTF_8));
         this.key = new SecretKeySpec(keyBytes, "HmacSHA256");
     }
 
