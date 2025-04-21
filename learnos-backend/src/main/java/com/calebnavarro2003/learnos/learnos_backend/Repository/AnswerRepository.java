@@ -48,4 +48,7 @@ public interface AnswerRepository extends JpaRepository<Answer, Integer> {
         WHERE q.module_id = :moduleId
         """, nativeQuery = true)
     List<Answer> findAnswersByModuleId(@Param("moduleId") Integer moduleId);
+
+    @Query(value = "SELECT (SUM(is_correct) * 1.0 / COUNT(response_id)) * 100 FROM responses", nativeQuery = true)
+    BigDecimal getOverallAccuracy();
 }
