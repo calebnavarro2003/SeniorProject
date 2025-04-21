@@ -35,4 +35,8 @@ public class ModuleService {
         BigDecimal overallAccuracy = answerRepository.getOverallAccuracy();
         return new SummaryResponse(overallAccuracy, moduleSummaries);
     }
+
+    public Module saveModule(Module module) {
+        return moduleRepository.save(module);
+    }
 }
