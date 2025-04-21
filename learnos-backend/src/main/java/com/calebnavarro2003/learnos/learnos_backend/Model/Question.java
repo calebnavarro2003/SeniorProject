@@ -22,6 +22,7 @@ public class Question {
     @Lob
     @Column(name = "Image", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
+    
 
     public int getQuestion_id() {
         return questionId;

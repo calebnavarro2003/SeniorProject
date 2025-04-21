@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.calebnavarro2003.learnos.learnos_backend.Service.ModuleService;
 import com.calebnavarro2003.learnos.learnos_backend.Model.Module;
+import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleUpdateRequest;
 import com.calebnavarro2003.learnos.learnos_backend.Model.SummaryResponse;
 
 import java.util.List;
@@ -43,5 +44,10 @@ public class ModuleController {
 public Module createModule(@RequestBody Module module) {
     return moduleService.saveModule(module);
 }
+
+    @PostMapping("/update")
+    public Module updateModule(@RequestBody ModuleUpdateRequest moduleUpdateRequest) {
+        return moduleService.updateModule(moduleUpdateRequest);
+    }
     
 }
