@@ -47,19 +47,35 @@ function InstructorQuestionEditor() {
         navigate(modulePath + "/edit", {state: { updatedModuleInfo }} )
     };
 
+    // helper to convert File → base64 string (no prefix)
+    const fileToBase64 = (file) =>
+        new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.readAsDataURL(file);
+        reader.onload = () => {
+            const base64String = reader.result.split(",")[1];
+            resolve(base64String);
+        };
+        reader.onerror = (error) => reject(error);
+    });
+
     const handleDiscardQuestion = () => {
         const updatedModuleInfo = moduleInfo
 
         navigate(modulePath + "/edit", {state: { updatedModuleInfo }} )
     }
 
-    const handleImageUpload = (event) => {
+    const handleImageUpload = async (event) => {
         const file = event.target.files[0];
         if (file) {
-            const imageUrl = URL.createObjectURL(file);
-            setImage(imageUrl);
+          try {
+            const b64 = await fileToBase64(file);
+            setImage(b64);
+          } catch (err) {
+            console.error("Failed to convert image to base64", err);
+          }
         }
-    };
+      };
 
   return (
     <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full">

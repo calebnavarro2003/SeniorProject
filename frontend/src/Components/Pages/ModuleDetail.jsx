@@ -165,7 +165,7 @@ const ModuleDetail = () => {
     setReviewAnswers(true);
   };
 
-  const unansweredCount = module.filter((question) => !selectedAnswers[question.question_id]).length;
+  const unansweredCount = module.filter((question) => !selectedAnswers[question.questionId]).length;
 
   const handleSubmitAnswers = async () => {
     if (unansweredCount > 0) {
@@ -241,7 +241,7 @@ const ModuleDetail = () => {
               handleAnswerSelect={handleAnswerSelect}
               handlePrevious={handlePreviousQuestion}
               handleNext={handleNextQuestion}
-              correctAnswer={correctAnswer && correctAnswer[currentQuestion.question_id]}
+              correctAnswer={correctAnswer && correctAnswer[currentQuestion.questionId]}
               reviewingQuestions={reviewingQuestions}
               handleReviewModule={handleReviewModule}
             />

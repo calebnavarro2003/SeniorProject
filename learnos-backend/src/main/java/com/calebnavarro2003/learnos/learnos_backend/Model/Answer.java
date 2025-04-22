@@ -38,6 +38,9 @@ public class Answer {
         this.Letter = correctAnswer;
     }
 
+    public Answer() {
+    }
+
     public List<Answer> getAnswers() {
         return answers;
     }

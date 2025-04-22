@@ -1,30 +1,75 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import { useNavigate, useLocation } from 'react-router-dom';
+import { fetchModuleInfo, fetchModuleDetails, updateModule, fetchModuleAnswers } from "../../../Services/UserService";
 
 function InstructorModuleEditor() {
     const navigate = useNavigate();
     const location = useLocation();
     const modulePath = location.pathname.split('/').slice(0, -1).join('/');
-
-    // Initialize state with either passed data or default temp values (which will be an API call in actuality)
-    const [moduleInfo, setModuleInfo] = useState(
-        location.state?.updatedModuleInfo || {
-            title: "Module 0: Computer Hardware Fundamentals",
-            description: "Description of module X. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ",
-            questions: [
-                { id: 1, title: "Question 1", description: "Description of question 1. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ", type: "multipleChoice", correctAnswer: "B" },
-                { id: 2, title: "Question 2", description: "Description of question 2. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ", type: "multipleChoice", correctAnswer: "C"  },
-                { id: 3, title: "Question 3", description: "Description of question 3. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ", type: "trueFalse", correctAnswer: "True"  },
-                { id: 4, title: "Question 4", description: "Description of question 4. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. ", type: "trueFalse", correctAnswer: "False"  },
-            ],
-        }
-    );
+    const moduleId = location.pathname.split('/')[location.pathname.split('/').length - 2];
 
     // State to track if title and description are being edited
     const [isEditingTitle, setIsEditingTitle] = useState(false);
     const [isEditingDescription, setIsEditingDescription] = useState(false);
-    const [tempTitle, setTempTitle] = useState(moduleInfo.title);
-    const [tempDescription, setTempDescription] = useState(moduleInfo.description);
+    const [tempTitle, setTempTitle] = useState("");
+    const [tempDescription, setTempDescription] = useState("");
+
+    // Initialize state with either passed data or default temp values (which will be an API call in actuality)
+    const [moduleInfo, setModuleInfo] = useState(
+        location.state?.updatedModuleInfo ?? null
+    );
+
+
+    // Call for setting module information
+    useEffect(() => {
+        if (moduleInfo) {
+            setTempTitle(moduleInfo.title);
+            setTempDescription(moduleInfo.description);
+            return;
+          }
+        const fetchData = async () => {
+            try {
+                if (!location.state?.updatedModuleInfo) {
+                    const modInfo      = await fetchModuleInfo(moduleId)
+                    const modQuestions = await fetchModuleDetails(moduleId)
+                    const modAnswers   = await fetchModuleAnswers(moduleId)
+                    
+                    // build a map from questionId → user’s letter answer
+                    const answerMap = new Map(modAnswers.map(a => [ a.questionId, a.letter ]))
+                    console.log(modQuestions);
+                    
+                    // build your questions array
+                    const questions = modQuestions.map((q, idx) => {
+                      // grab the numeric id field (adjust property name as needed)
+                      const id = q.questionId ?? q.id
+                    
+                      return {
+                        id,
+                        title:       `Question ${idx + 1}`,
+                        description: q.content,        // or q.questionContent if that’s your field
+                        type:        "multipleChoice",
+                        image: q.image,
+                        correctAnswer: answerMap.get(id) ?? null
+                      }
+                    })
+                    
+                    // finally assemble your moduleInfo object
+                    const moduleInfo = {
+                      title:       modInfo.title,
+                      description: modInfo.description,
+                      questions
+                    }
+                    
+                    // e.g. store in state:
+                    setModuleInfo(moduleInfo)
+                }
+
+            } catch (err) {
+                console.error("Failed to fetch module details", err);
+            }
+        }
+        fetchData();
+      }, [moduleId, moduleInfo]);
 
     // Handle save changes for title and description
     const handleSaveTitle = () => {
@@ -37,10 +82,30 @@ function InstructorModuleEditor() {
         setIsEditingDescription(false);
     };
 
-    const handleSaveModule = () => {
-        console.log("Saving module:", moduleInfo);
-        // TODO: Add API POST request here then navigate back to /modules
-    };
+    const handleSaveModule = async () => {
+        console.log(moduleInfo);
+        try {
+          // call the updateModule API with the current moduleInfo
+          await updateModule({
+            id: parseInt(moduleId, 10),
+            title: moduleInfo.title,
+            description: moduleInfo.description,
+            questions: moduleInfo.questions.map(q => ({
+              questionId: q.id,
+              title: q.title,
+              description: q.description,
+              type: q.type,
+              image: q.image,
+              correctAnswer: q.correctAnswer
+            }))
+          });
+          // navigate back to the modules list
+          navigate("/admin/modules");
+        } catch (err) {
+          console.error("Failed to save module:", err);
+          // optionally show an error message to the user here
+        }
+      };      
 
     const handleNewQuestion = () => {
         navigate(modulePath + "/question/new/edit", { state: { moduleInfo } });
@@ -72,6 +137,7 @@ function InstructorModuleEditor() {
         }
     };
 
+    if(!moduleInfo) return <p>Loading...</p>;
     return (
         <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full gap-4">
             <div className="flex flex-col h-full w-full gap-4 overflow-auto">
