@@ -1,5 +1,6 @@
 import React, { useState } from "react";
 import { useLocation, useNavigate } from "react-router-dom";
+import { createModule } from "../../../Services/UserService";
 
 
 export default function CreateModule() {
@@ -10,19 +11,20 @@ export default function CreateModule() {
     const [title, setTitle] = useState("");
     const [description, setDescription] = useState("");
 
-    const handleSubmit = (e) => {
+    const handleSubmit = async (e) => {
         e.preventDefault();
-
-        const newModule = {
-            moduleId: moduleId, 
-            title: title,
-            description: description, 
+    
+        try {
+          await createModule({
+            moduleId,           
+            title,
+            description
+          });
+          navigate("/admin/modules");
+        } catch (err) {
+          console.error("Error creating module:", err);
         }
-
-        // Add API call to create new module
-
-        navigate('/admin/modules')
-    };
+      };
 
     return (
         <div className="flex flex-col items-center h-full bg-gray-100 p-4 w-full">

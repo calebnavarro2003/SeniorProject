@@ -15,15 +15,15 @@ const ModuleCarousel = ({ modules }) => {
           modules.map((module) => {
             return (
               <div
-              key={module.id}
+              key={module.moduleId}
               className="flex flex-col flex-shrink-0 w-72 h-full bg-white shadow rounded-lg p-6"
             >
-              <h2 className="text-xl font-semibold">{module.title}</h2>
+              <h2 className="text-xl font-semibold">{"Module "} {module.moduleId} {module.title}</h2>
               <div className='flex flex-col h-full items-center gap-2 text-large my-8 md:my-8 md:justify-center'>
                 Completion Rate
                 <ProgressCircle value={module.completionRate} size={160} />
               </div>
-              <button className='mt-auto ml-auto hover:underline' onClick={() => handleViewInsights(module.id)}>View Insights &rarr;</button>
+              <button className='mt-auto ml-auto hover:underline' onClick={() => handleViewInsights(module.moduleId)}>View Insights &rarr;</button>
             </div>
             )
           })

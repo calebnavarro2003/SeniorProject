@@ -95,3 +95,39 @@ export const fetchModuleInfo = async (moduleId) => {
     throw error;
   }
 }
+
+export const fetchModuleSummary = async () => {
+  try {
+    const response = await axios.get(`${BASE_URL}/module/summary`, {
+      withCredentials: true
+    });
+    return response.data; // assuming this is a SummaryResponse object
+  } catch (error) {
+    console.error("Error fetching module summary:", error);
+    throw error;
+  }
+};
+
+export const createModule = async (moduleData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/module/create`, moduleData, {
+      withCredentials: true
+    });
+    return response.data; // newly created Module
+  } catch (error) {
+    console.error("Error creating module:", error);
+    throw error;
+  }
+};
+
+export const updateModule = async (updateData) => {
+  try {
+    const response = await axios.post(`${BASE_URL}/module/update`, updateData, {
+      withCredentials: true
+    });
+    return response.data; // updated Module
+  } catch (error) {
+    console.error("Error updating module:", error);
+    throw error;
+  }
+};

@@ -17,4 +17,6 @@ public interface GradeRepository extends JpaRepository<Grade, GradeId> {
     
     @Query("SELECT g FROM Grade g WHERE g.id.userId = :userId")
     List<Grade> findByUserId(@Param("userId") Integer userId);
+    
+    void deleteByIdModuleId(int moduleId);
 }

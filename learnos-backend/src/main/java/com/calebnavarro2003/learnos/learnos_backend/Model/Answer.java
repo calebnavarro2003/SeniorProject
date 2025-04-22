@@ -6,15 +6,19 @@ import java.util.List;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
 
+
 @Entity
 @Table(name = "answers")
 public class Answer {
     @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int answer_id;
     private int questionId;
     private int userId;
@@ -26,6 +30,16 @@ public class Answer {
 
     @OneToMany(fetch = FetchType.LAZY, mappedBy = "answer")
     private List<Answer> answers;
+
+
+    public Answer(String correctAnswer, int questionId, int userId) {
+        this.questionId = questionId;
+        this.userId = 0;
+        this.Letter = correctAnswer;
+    }
+
+    public Answer() {
+    }
 
     public List<Answer> getAnswers() {
         return answers;
