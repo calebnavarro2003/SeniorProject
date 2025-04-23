@@ -9,7 +9,10 @@ import org.springframework.stereotype.Service;
 import com.calebnavarro2003.learnos.learnos_backend.Repository.AnswerRepository;
 import com.calebnavarro2003.learnos.learnos_backend.Repository.ModuleRepository;
 import com.calebnavarro2003.learnos.learnos_backend.Repository.QuestionRepository;
+import com.calebnavarro2003.learnos.learnos_backend.Repository.UserRepository;
 import com.calebnavarro2003.learnos.learnos_backend.Model.Module;
+import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleInsight;
+import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleQuestionStats;
 import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleSummary;
 import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleUpdateRequest;
 import com.calebnavarro2003.learnos.learnos_backend.Model.Question;
@@ -28,6 +31,9 @@ public class ModuleService {
 
     @Autowired
     QuestionRepository questionRepository;
+
+    @Autowired
+    UserRepository userRepository;
 
     
     public List<Module> getAllModules(){
@@ -79,4 +85,18 @@ public class ModuleService {
         
         return moduleRepository.save(module);
     }
+
+
+    public ModuleInsight getModuleInsights(int moduleId) {
+        BigDecimal overallAccuracy = answerRepository.getOverallAccuracyByModuleId(moduleId);
+        Long distinctUsers = answerRepository.countDistinctUsersByModuleId(moduleId);
+        Long totalUsers = userRepository.countByRole("USER");
+        List<ModuleQuestionStats> moduleQuestionStats = answerRepository.getPerQuestionAccuracyByModuleId(moduleId);
+        for (ModuleQuestionStats stats : moduleQuestionStats) {
+            System.err.println("QuestionId: " + stats.getQuestionId() + ", Accuracy: " + stats.getAccuracy());
+        }
+        ModuleInsight moduleInsight = new ModuleInsight(overallAccuracy, (distinctUsers/totalUsers), moduleQuestionStats);
+
+        return moduleInsight;
+}
 }

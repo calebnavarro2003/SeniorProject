@@ -32,6 +32,8 @@ public class Answer {
     private List<Answer> answers;
 
 
+    public Answer() {
+    }
     public Answer(String correctAnswer, int questionId, int userId) {
         this.questionId = questionId;
         this.userId = 0;

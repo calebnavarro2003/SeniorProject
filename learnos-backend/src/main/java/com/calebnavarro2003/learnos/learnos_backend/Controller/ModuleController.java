@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import com.calebnavarro2003.learnos.learnos_backend.Service.ModuleService;
 import com.calebnavarro2003.learnos.learnos_backend.Model.Module;
+import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleInsight;
 import com.calebnavarro2003.learnos.learnos_backend.Model.ModuleUpdateRequest;
 import com.calebnavarro2003.learnos.learnos_backend.Model.SummaryResponse;
 
@@ -48,6 +49,12 @@ public Module createModule(@RequestBody Module module) {
     @PostMapping("/update")
     public Module updateModule(@RequestBody ModuleUpdateRequest moduleUpdateRequest) {
         return moduleService.updateModule(moduleUpdateRequest);
+    }
+
+    @GetMapping("summary/{moduleId}")
+    public ModuleInsight getModuleInsights(@PathVariable Integer moduleId) {
+        ModuleInsight summaryResponse = moduleService.getModuleInsights(moduleId);
+        return summaryResponse;
     }
     
 }
