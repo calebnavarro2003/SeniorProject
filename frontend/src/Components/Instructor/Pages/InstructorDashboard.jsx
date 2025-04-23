@@ -1,18 +1,28 @@
 import ModuleCarousel from '../ModuleCarousel';
 import ProgressCircle from '../ProgressCircle';
+import { useEffect, useState } from 'react';
+import { fetchModuleSummary } from "../../../Services/UserService";
 
 export default function Dashboard() {
-  // will have to add some call to fetch the modules and their completion rates
-  const overallAccuracy = 0.88 
-  const sampleModules = [
-    { id: 1, title: "Module 1", completionRate: 0.78},
-    { id: 2, title: "Module 2", completionRate: 0.78},
-    { id: 3, title: "Module 3", completionRate: 0.78},
-    { id: 4, title: "Module 4", completionRate: 0.78},
-    { id: 5, title: "Module 5", completionRate: 0.78},
-    { id: 6, title: "Module 6", completionRate: 0.78},
-    { id: 7, title: "Module 7", completionRate: 0.78},
-  ];
+  const [modules, setModules] = useState(null);
+  const [overallAccuracy, setOverallAccuracy] = useState(null);
+
+  // Calls for getting the module data and numbers on the dashboard
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const summaries = await fetchModuleSummary();
+        setModules(summaries.modules);
+        setOverallAccuracy(summaries.overallAccuracy);
+
+      } catch (err) {
+        console.error("Failed to fetch module summary", err);
+      }
+    };
+    fetchData();
+  }, []);
+
+  if (!modules || !overallAccuracy) return <div>Loading...</div>;
 
   return (
     <div className="flex flex-col px-4 py-4 gap-4 w-full h-full flex-1 bg-gray-100">
@@ -31,7 +41,7 @@ export default function Dashboard() {
       {/* Bottom Section */}
       <div className="grid grid-row-1 h-full overflow-x-auto">
         {/* Pass modules to module carousel component */}
-        <ModuleCarousel modules={sampleModules} />
+        <ModuleCarousel modules={modules} />
       </div>
     </div>
   );

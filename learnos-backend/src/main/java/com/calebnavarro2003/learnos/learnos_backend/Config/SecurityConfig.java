@@ -45,9 +45,21 @@ public class SecurityConfig {
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .authorizeHttpRequests(authorizeRequests ->
                         authorizeRequests
-                                .requestMatchers("/oauth2/**", "/login/**", "/public/**", "/auth/**").permitAll()
-                                .requestMatchers("/admin/**").hasAnyAuthority("ADMIN")
-                                .anyRequest().authenticated())
+                        .requestMatchers(
+                            "/oauth2/**",
+                            "/login/**",
+                            "/public/**",
+                            "/auth/**",
+                            "/module/summary",     
+                            "/module/update" // ← add this
+                        ).permitAll()
+                        // admin paths stay locked down
+                        .requestMatchers("/admin/**").hasAuthority("ADMIN")
+                        // everything else requires login
+                        .requestMatchers("/module/**").permitAll()
+
+                        .anyRequest().authenticated()
+                    )
                 .sessionManagement(manager -> manager.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .oauth2Login(oauth2 -> oauth2
                         .successHandler((request, response, authentication) -> {

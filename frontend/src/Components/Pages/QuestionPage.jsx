@@ -29,17 +29,17 @@ const QuestionPage = ({
               key={choice}
               className={`px-4 py-2 rounded text-xl ${
                 reviewingQuestions
-                  ? selectedAnswers[currentQuestion.question_id] === choice
+                  ? selectedAnswers[currentQuestion.questionId] === choice
                     ? "bg-green-700"
                     : correctAnswer === choice
                     ? "bg-green-500"
                     : "bg-red-500"
-                  : selectedAnswers[currentQuestion.question_id] === choice
+                  : selectedAnswers[currentQuestion.questionId] === choice
                   ? "bg-green-700"
                   : "bg-green-500"
               } text-white`}
               onClick={() =>
-                !reviewingQuestions && handleAnswerSelect(currentQuestion.question_id, choice)
+                !reviewingQuestions && handleAnswerSelect(currentQuestion.questionId, choice)
               }
               disabled={reviewingQuestions}
             >

@@ -1,20 +1,24 @@
 package com.calebnavarro2003.learnos.learnos_backend.Model;
 
-
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Lob;
 import jakarta.persistence.Table;
-import jakarta.persistence.Transient;
-import java.util.Base64;
 
 @Entity
 @Table(name = "questions")
 public class Question {
+
     @Id
-    private int questionId;
-    private int moduleId;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "question_id")
+    private Integer questionId;
+
+    @Column(name = "module_id", nullable = false)
+    private Integer moduleId;
 
     @Column(columnDefinition = "TEXT")
     private String content;
@@ -22,34 +26,27 @@ public class Question {
     @Lob
     @Column(name = "Image", columnDefinition = "MEDIUMBLOB")
     private byte[] image;
-    
 
-    public int getQuestion_id() {
+    public Question() { }
+
+    // ————— Getters & Setters —————
+
+    public Integer getQuestionId() {
         return questionId;
     }
 
-    public void setQuestion_id(int question_id) {
-        this.questionId = question_id;
+    // No setter for questionId if you want it fully managed by the DB,
+    // or include one if you need it.
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
     }
 
-    public int getModuleId() {
+    public Integer getModuleId() {
         return moduleId;
     }
 
-    public void setModuleId(int moduleId) {
+    public void setModuleId(Integer moduleId) {
         this.moduleId = moduleId;
-    }
-
-    public byte[] getImage() {
-        return image;
-    }
-
-    public void setImage(byte[] image) {
-        this.image = image;
-    }
-
-    public void setQuestionId(int questionId) {
-        this.questionId = questionId;
     }
 
     public String getContent() {
@@ -60,6 +57,11 @@ public class Question {
         this.content = content;
     }
 
+    public byte[] getImage() {
+        return image;
+    }
 
-
+    public void setImage(byte[] image) {
+        this.image = image;
+    }
 }

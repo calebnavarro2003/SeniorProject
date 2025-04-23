@@ -1,15 +1,16 @@
 import React from "react";
 
 const CircularProgressBar = ({ value, size = 120 }) => {
+    const newVal = value / 100; // Edits values since they're currently being calculated as whole numbers not decimals.
     const strokeWidth = size * 0.15; // Stroke scales with size
     const radius = (size - strokeWidth) / 2; // Ensure circle fits
     const circumference = 2 * Math.PI * radius;
-    const progress = Math.min(Math.max(value, 0), 1) * circumference; // Clamp value between 0 and 1
+    const progress = Math.min(Math.max(newVal, 0), 1) * circumference; // Clamp value between 0 and 1
 
     // Determine the progress color
     const getColor = () => {
-        if (value < 0.6) return "#FF746C"; // Red
-        if (value < 0.8) return "#FFEE8C"; // Yellow
+        if (newVal < 0.6) return "#FF746C"; // Red
+        if (newVal < 0.8) return "#FFEE8C"; // Yellow
         return "#82EBD1"; // Green
     };
 
@@ -49,7 +50,7 @@ const CircularProgressBar = ({ value, size = 120 }) => {
                 fontWeight="bold"
                 fill="#333"
             >
-                {Math.round(value * 100)}%
+                {Math.round(newVal * 100)}%
             </text>
         </svg>
     );

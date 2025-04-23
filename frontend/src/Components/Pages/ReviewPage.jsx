@@ -10,10 +10,10 @@ const ReviewPage = ({ module, moduleId, selectedAnswers, unansweredCount, handle
         {unansweredCount} Questions Unanswered
       </div>
       {module.map((question, index) => (
-        <div key={question.question_id} className="flex items-center justify-between mb-4">
+        <div key={question.questionId} className="flex items-center justify-between mb-4">
           <p className="text-lg text-gray-700">
             Question {index + 1}
-            {selectedAnswers[question.question_id] ? (
+            {selectedAnswers[question.questionId] ? (
               <span className="text-green-500 ml-2">&#10003;</span>
             ) : (
               <span className="text-red-500 ml-2">&#10007;</span>
